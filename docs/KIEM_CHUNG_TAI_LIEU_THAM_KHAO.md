@@ -84,8 +84,9 @@ trong điều kiện triển khai thật.
 
 Bộ thí nghiệm hiện hành không có cặp đối chứng nào giữa cấu hình của đồ án và
 cấu hình tác giả công bố. Hạn chế về distribution shift mà tác giả tự nêu thì có
-kiểm: phần đánh giá out-of-distribution ở mục 4 của `notebooks/twoDTS/
-NB3_phan_tich.ipynb` đưa ba mô hình sang NF-ToN-IoT-v3 và đo mức suy giảm.
+kiểm: phần đánh giá out-of-distribution trong
+`notebooks/executed/twodts-phan-tich.ipynb` đưa ba mô hình sang NF-ToN-IoT-v3
+và đo mức suy giảm.
 
 ## 3. TE-G-SAGE — cấu hình thật và luận điểm trung tâm
 

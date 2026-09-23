@@ -43,7 +43,9 @@ thấy biểu diễn đồ thị thời gian khai thác được ngữ cảnh li
 tạo ra khoảng cách rõ rệt so với mô hình bảng được tinh chỉnh tốt.
 
 Điều kiện đo, kết quả theo lớp và các giới hạn thực nghiệm được trình bày trong
-[`docs/`](docs/README.md).
+[`docs/`](docs/README.md). Dữ liệu gốc, checkpoint, báo cáo Word và toàn văn
+tài liệu tham khảo được nhóm lưu trong gói Google Drive đi kèm, không nằm trong
+kho mã công khai.
 
 ## Dashboard
 
@@ -57,7 +59,8 @@ tạo ra khoảng cách rõ rệt so với mô hình bảng được tinh chỉn
 
 Kho mã công khai không kèm dữ liệu thô hoặc checkpoint. Khi không có trọng số,
 dashboard chuyển sang chế độ demo; kết quả khi đó chỉ dùng để kiểm tra luồng xử
-lý và giao diện, không đại diện cho hiệu năng của mô hình đã huấn luyện.
+lý và giao diện, không đại diện cho hiệu năng của mô hình đã huấn luyện. Muốn
+chạy suy luận bằng trọng số đã chốt, cần có gói Drive đi kèm.
 
 ## Cài đặt
 
@@ -119,7 +122,8 @@ TGN-NIDS/
 | [`tests/`](tests/README.md) | Kiểm thử các điều kiện ảnh hưởng đến tính đúng của kết quả |
 
 Dữ liệu thô, checkpoint, gói phân phối, báo cáo Word, hồ sơ chính thức của
-trường và notebook nguồn không nằm trong kho công khai.
+trường và toàn văn tài liệu tham khảo không nằm trong kho công khai. Chúng được
+tổ chức riêng trong gói Google Drive của đồ án.
 
 ## Nhóm thực hiện
 

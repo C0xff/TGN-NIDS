@@ -4,6 +4,9 @@ Thư mục này chứa gói Python `tgn_nids`, tức phần mã nguồn lõi c�
 Các tệp trong đây xử lý dữ liệu NetFlow, dựng đồ thị thời gian, định nghĩa mô
 hình, điều phối thí nghiệm, giải thích dự đoán và chuẩn hóa đầu ra báo cáo.
 
+Dữ liệu và checkpoint cần cho các luồng chạy đầy đủ được lưu ngoài kho mã công
+khai, trong gói Google Drive đi kèm.
+
 ## Cấu trúc thư mục
 
 ```text

@@ -123,8 +123,8 @@ hơn biên độ dao động. Nên cùng với kết luận phải ghi biên đ�
 
 ---
 
-## 7. Nguồn của notebook
+## 7. Nguồn thực nghiệm
 
-Bản nguồn là `notebooks/twoDTS/NB4_ablation.ipynb`, bản đã thực thi kèm đầu ra
-từng ô là `notebooks/executed/b-twodts-ablation.ipynb`, chạy trên Kaggle ở kernel
+Notebook đã thực thi kèm đầu ra từng ô là
+`notebooks/executed/b-twodts-ablation.ipynb`, chạy trên Kaggle ở kernel
 `julonao/b-twodts-ablation`.

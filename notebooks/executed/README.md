@@ -26,3 +26,6 @@ executed/
 
 Các notebook được giữ nguyên mã và đầu ra của lần chạy đã dùng để tổng hợp báo
 cáo. Vì vậy, nên xem chúng như bản ghi thực nghiệm thay vì chỉnh sửa trực tiếp.
+
+Để thực thi đầy đủ, cần có dữ liệu, checkpoint và môi trường thí nghiệm trong
+gói Google Drive đi kèm. Các tài sản này không có trong kho GitHub công khai.
