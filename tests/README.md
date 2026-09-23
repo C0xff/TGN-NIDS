@@ -4,6 +4,9 @@
 cần được giữ ổn định: dữ liệu đầu vào, cách chia tập, chỉ số đánh giá, mô hình
 và các ràng buộc bảo vệ trong quá trình thí nghiệm.
 
+Các kiểm thử dùng dữ liệu tổng hợp hoặc fixture nhỏ, không yêu cầu tải bộ dữ
+liệu hay checkpoint trong gói Google Drive.
+
 ## Các tệp kiểm thử
 
 | Tệp | Chức năng |

@@ -51,3 +51,10 @@ Các tệp trong `static/vendor/` là thư viện bên thứ ba được nhúng 
 
 Các bundle trong `static/vendor/` không thuộc mã nguồn do đồ án tự phát triển;
 không chỉnh sửa comment, mã nén hoặc định dạng của chúng khi bảo trì dashboard.
+
+## Tài sản ngoài GitHub
+
+Kho công khai không kèm checkpoint hoặc dữ liệu mẫu. Khi thiếu các tệp này,
+dashboard chỉ hoạt động ở chế độ trình diễn để kiểm tra luồng xử lý và giao
+diện. Gói Google Drive đi kèm lưu các tài sản cần thiết khi muốn chạy suy luận
+bằng trọng số đã chốt.
