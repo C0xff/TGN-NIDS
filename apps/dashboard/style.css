@@ -1,0 +1,1151 @@
+/* ==========================================================================
+   Kiểu giao diện chung của dashboard.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,500,0,0');
+
+/* Biểu tượng Material Symbols */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: 500;
+    font-style: normal;
+    font-size: 1em;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    vertical-align: -0.15em;
+}
+
+/* Màu mặc định; theme.py sẽ ghi đè theo chủ đề. */
+:root {
+    --bg-base: #070302;
+    --bg-surface: var(--bg-card);
+    --bg-card: var(--bg-card);
+    --bg-card-hover: var(--bg-card-hover);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-accent: var(--border-accent);
+    --border-danger: rgba(220, 38, 38, 0.45);
+
+    --neon-cyan: var(--neon-cyan);
+    --neon-emerald: var(--text-main);
+    --neon-amber: var(--neon-amber);
+    --neon-rose: #dc2626;
+    --neon-purple: var(--neon-purple);
+
+    --text-main: var(--text-main);
+    --text-muted: var(--text-muted);
+    --text-highlight: var(--text-highlight);
+}
+
+/* Nền trang */
+.stApp {
+    background: radial-gradient(circle at 15% 15%, #2b1408 0%, #150a04 45%, #070302 100%) !important;
+    color: var(--text-main) !important;
+    font-family: "IBM Plex Sans", -apple-system, sans-serif !important;
+}
+
+/* Thanh bên */
+section[data-testid="stSidebar"][aria-expanded="false"] {
+    min-width: 0 !important;
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 5, 2, 1.0) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+    box-shadow: 10px 0 30px var(--bg-card) !important;
+    min-width: 300px !important;
+}
+
+section[data-testid="stSidebar"][aria-expanded="true"] {
+    min-width: 300px !important;
+}
+
+/* Nhãn trong thanh bên */
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] label p,
+section[data-testid="stSidebar"] label span,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
+    color: var(--text-main) !important;
+    font-weight: 500 !important;
+    font-size: 0.92rem !important;
+}
+
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: var(--text-highlight) !important;
+    font-family: "IBM Plex Sans", sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label p {
+    color: var(--text-highlight) !important;
+    font-weight: 600 !important;
+}
+
+section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+    color: var(--text-highlight) !important;
+    font-weight: 600 !important;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
+    color: var(--neon-cyan) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzoneInstructions"] {
+    color: var(--text-main) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzoneInstructions"] small {
+    color: var(--bg-card-hover) !important;
+}
+
+/* Khu vực tải tệp */
+section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+    background: var(--bg-card) !important;
+    border: 1.5px dashed var(--border-accent) !important;
+    border-radius: 10px !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] button {
+    background: var(--bg-card-hover) !important;
+    color: var(--neon-cyan) !important;
+    border: 1px solid var(--border-accent) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stFileUploaderFile"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 8px !important;
+}
+
+/* Thanh tab */
+div[role="tablist"],
+div[data-testid="stTabs"] [role="tablist"],
+.stTabs [data-baseweb="tab-list"],
+div[data-testid="stTabs"]>div:first-child {
+    gap: 14px !important;
+    background: var(--bg-surface) !important;
+    padding: 8px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid var(--border-accent) !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 4px 25px var(--bg-card) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+div[data-testid="stTab"],
+div[role="tab"],
+button[role="tab"],
+button[data-testid="stTab"],
+.stTabs [data-baseweb="tab"] {
+    background-color: var(--bg-surface) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 10px !important;
+    padding: 10px 24px !important;
+    margin-right: 8px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+}
+
+div[data-testid="stTab"] *,
+div[role="tab"] *,
+button[role="tab"] *,
+button[data-testid="stTab"] *,
+.stTabs [data-baseweb="tab"] * {
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+    font-size: 0.98rem !important;
+    opacity: 1 !important;
+}
+
+div[data-testid="stTab"]:hover,
+div[role="tab"]:hover,
+button[role="tab"]:hover,
+.stTabs [data-baseweb="tab"]:hover {
+    background-color: var(--border-subtle) !important;
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 15px var(--border-accent) !important;
+}
+
+div[data-testid="stTab"]:hover *,
+div[role="tab"]:hover *,
+button[role="tab"]:hover *,
+.stTabs [data-baseweb="tab"]:hover * {
+    color: var(--text-highlight) !important;
+}
+
+/* Tab đang chọn */
+div[data-testid="stTab"][aria-selected="true"],
+div[data-testid="stTab"][data-selected="true"],
+div[role="tab"][aria-selected="true"],
+button[role="tab"][aria-selected="true"],
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: var(--bg-card-hover) !important;
+    border: 1.5px solid var(--neon-cyan) !important;
+    box-shadow: 0 0 25px var(--border-accent) !important;
+}
+
+div[data-testid="stTab"][aria-selected="true"] *,
+div[data-testid="stTab"][data-selected="true"] *,
+div[role="tab"][aria-selected="true"] *,
+button[role="tab"][aria-selected="true"] *,
+.stTabs [data-baseweb="tab"][aria-selected="true"] * {
+    color: var(--text-highlight) !important;
+    font-weight: 900 !important;
+}
+
+/* Nút Streamlit */
+.stButton>button,
+button[data-testid="stBaseButton-primary"],
+button[data-testid="stBaseButton-secondary"],
+button[kind="primary"],
+button[kind="secondary"] {
+    border-radius: 10px !important;
+    font-family: "IBM Plex Sans", sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 0.86rem !important;
+    letter-spacing: 0.01em !important;
+    padding: 8px 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Nút chính */
+button[data-testid="stBaseButton-primary"],
+button[kind="primary"] {
+    background: var(--neon-cyan) !important;
+    color: var(--text-highlight) !important;
+    border: 1.5px solid var(--neon-purple) !important;
+    box-shadow: 0 0 15px var(--border-accent) !important;
+}
+
+button[data-testid="stBaseButton-primary"] *,
+button[kind="primary"] * {
+    color: var(--text-highlight) !important;
+    font-weight: 800 !important;
+}
+
+button[data-testid="stBaseButton-primary"]:hover,
+button[kind="primary"]:hover {
+    background: var(--neon-purple) !important;
+    box-shadow: 0 0 25px var(--border-accent) !important;
+    transform: translateY(-2px);
+}
+
+/* Nút phụ */
+button[data-testid="stBaseButton-secondary"],
+button[kind="secondary"] {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface) 100%) !important;
+    color: var(--text-main) !important;
+    border: 1.5px solid var(--border-accent) !important;
+    box-shadow: 0 4px 15px var(--bg-card) !important;
+}
+
+button[data-testid="stBaseButton-secondary"] *,
+button[kind="secondary"] * {
+    color: var(--text-main) !important;
+    font-weight: 800 !important;
+}
+
+button[data-testid="stBaseButton-secondary"]:hover,
+button[kind="secondary"]:hover {
+    background: linear-gradient(135deg, var(--border-subtle) 0%, var(--bg-surface) 100%) !important;
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 20px var(--border-accent) !important;
+    transform: translateY(-2px);
+}
+
+button[data-testid="stBaseButton-secondary"]:hover * {
+    color: var(--text-highlight) !important;
+}
+
+/* Điều khiển chọn và thanh trượt */
+.stSelectbox>div[data-baseweb="select"]>div {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-accent) !important;
+    border-radius: 10px !important;
+    color: var(--text-highlight) !important;
+}
+
+.stRadio>div[role="radiogroup"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--bg-card-hover) !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+}
+
+.stSlider>div[data-baseweb="slider"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--bg-card-hover) !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+}
+
+/* Bảng dữ liệu */
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle) !important;
+    overflow: hidden;
+}
+
+/* Nhãn có độ tương phản cao */
+div[data-testid="stWidgetLabel"] label,
+div[data-testid="stWidgetLabel"] label p,
+div[data-testid="stWidgetLabel"] p,
+div[data-testid="stWidgetLabel"] span,
+label[data-baseweb="label"],
+label[data-baseweb="label"] p,
+.stSelectbox label p,
+.stSlider label p,
+.stRadio label p,
+.stNumberInput label p,
+.stTextInput label p,
+.stFileUploader label p {
+    color: var(--neon-cyan) !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    margin-bottom: 6px !important;
+}
+
+/* Biểu tượng trợ giúp */
+button[data-testid="stTooltipHoverTarget"] svg,
+button[data-testid="stTooltipIcon"] svg {
+    fill: var(--neon-cyan) !important;
+    color: var(--neon-cyan) !important;
+}
+
+div[data-testid="stWidgetLabel"] small,
+div[data-testid="stCaptionContainer"] p,
+.stMarkdown p,
+.stMarkdown span {
+    color: var(--text-main) !important;
+}
+
+/* Khung mở rộng */
+div[data-testid="stExpander"] {
+    background: var(--bg-surface) !important;
+    border: 1.5px solid var(--border-accent) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 6px 25px var(--bg-card) !important;
+    overflow: hidden !important;
+    margin-top: 18px !important;
+}
+
+div[data-testid="stExpander"] details {
+    background: transparent !important;
+    color: var(--text-highlight) !important;
+}
+
+div[data-testid="stExpander"] details summary {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface) 100%) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 14px 20px !important;
+    border-radius: 12px 12px 0 0 !important;
+    color: var(--text-highlight) !important;
+}
+
+div[data-testid="stExpander"] details summary:hover {
+    background: linear-gradient(135deg, var(--bg-card-hover) 0%, var(--bg-surface) 100%) !important;
+}
+
+div[data-testid="stExpander"] details summary span p,
+div[data-testid="stExpander"] details summary p,
+div[data-testid="stExpander"] details summary span {
+    color: var(--text-highlight) !important;
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+}
+
+div[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    background: var(--bg-surface) !important;
+    padding: 18px !important;
+    color: var(--text-main) !important;
+}
+
+/* Ẩn menu mặc định của Streamlit. */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    z-index: 99999 !important;
+    height: 3.5rem !important;
+}
+
+button[data-testid="stSidebarCollapseButton"],
+button[data-testid="stExpandSidebarButton"],
+button[data-testid="baseButton-headerNoPadding"],
+[data-testid="stSidebarHeader"] button,
+[data-testid="collapsedControl"],
+[data-testid="collapsedControl"] button {
+    color: var(--neon-cyan) !important;
+    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface) 100%) !important;
+    border: 1.5px solid var(--neon-cyan) !important;
+    border-radius: 10px !important;
+    visibility: visible !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    border-width: 1px !important;
+    border-radius: 7px !important;
+    opacity: 0.65;
+}
+
+/* Header và nút mở thanh bên */
+[data-testid="stSidebarHeader"] {
+    padding: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+[data-testid="stLogoSpacer"] {
+    display: none !important;
+}
+
+section[data-testid="stSidebar"] {
+    overflow: visible !important;
+}
+
+[data-testid="stSidebarCollapseButton"] {
+    position: fixed !important;
+    left: 286px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: auto !important;
+    z-index: 1000 !important;
+}
+
+button[data-testid="stSidebarCollapseButton"]:hover,
+[data-testid="stSidebarHeader"] button:hover {
+    opacity: 1;
+    background: var(--bg-card-hover) !important;
+}
+
+button[data-testid="stExpandSidebarButton"] {
+    margin-left: 6px !important;
+    opacity: 0.8;
+}
+
+button[data-testid="stExpandSidebarButton"] span,
+button[data-testid="stSidebarCollapseButton"] span,
+[data-testid="stIconMaterial"] {
+    color: var(--neon-cyan) !important;
+    fill: var(--neon-cyan) !important;
+    font-weight: 600 !important;
+    font-size: 17px !important;
+}
+
+button[data-testid="stExpandSidebarButton"]:hover,
+[data-testid="collapsedControl"] button:hover {
+    background: var(--border-subtle) !important;
+    opacity: 1;
+}
+
+/* Bảng cảnh báo */
+.alert-feed {
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-accent);
+    border-radius: 14px;
+    box-shadow: 0 6px 25px var(--bg-card);
+    overflow: hidden;
+    margin-top: 18px;
+}
+
+.alert-feed-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-highlight);
+}
+
+.alert-feed-head .material-symbols-outlined {
+    font-size: 1.05rem;
+    color: var(--neon-cyan);
+}
+
+.alert-feed-count {
+    margin-left: auto;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--table-dim);
+}
+
+.alert-feed-empty {
+    padding: 22px 16px;
+    text-align: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.alert-feed-body {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.alert-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+}
+
+.alert-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--bg-surface);
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--table-dim);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.alert-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alert-table .c-batch {
+    width: 12%;
+    color: var(--table-dim);
+}
+
+.alert-table .c-endpoint {
+    width: 24%;
+}
+
+.alert-table .c-attack {
+    width: 26%;
+    color: var(--neon-cyan);
+}
+
+.alert-table .c-conf {
+    width: 14%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Endpoint tổng hợp */
+.alert-table .is-anon {
+    color: var(--table-dim);
+    font-style: italic;
+}
+
+.alert-row.is-newest td {
+    background: rgba(220, 38, 38, 0.12);
+}
+
+.alert-row.is-newest .c-batch {
+    box-shadow: inset 3px 0 0 var(--neon-rose);
+    color: var(--neon-rose);
+    font-weight: 700;
+}
+
+.alert-row:hover td {
+    background: var(--bg-card-hover);
+}
+
+/* Biểu tượng dashboard */
+section[data-testid="stSidebar"] .material-symbols-outlined.panel-mark {
+    font-size: 1.25rem !important;
+    color: var(--neon-cyan) !important;
+    vertical-align: -0.18em !important;
+    margin-right: 3px !important;
+}
+
+/* Dải mật độ tấn công */
+.capture-hero {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 18px 22px 16px;
+    margin-bottom: 18px;
+}
+
+.capture-id {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.capture-id .capture-mark {
+    font-size: 1.15rem !important;
+    color: var(--neon-cyan) !important;
+    align-self: center;
+}
+
+.capture-name {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-highlight);
+}
+
+.capture-desc {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.capture-status {
+    margin-left: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.capture-status.is-warn {
+    border-color: rgba(220, 38, 38, 0.45);
+    color: #ef4444;
+}
+
+.capture-meta {
+    margin-top: 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+/* Cột mật độ */
+.capture-ribbon {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 64px;
+    margin-top: 8px;
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--border-accent);
+}
+
+.rib-bar {
+    flex: 1 1 0;
+    min-width: 2px;
+    background: linear-gradient(180deg, var(--neon-cyan) 0%, #9a3412 100%);
+    border-radius: 1px 1px 0 0;
+    opacity: 0.85;
+}
+
+/* Vùng có mật độ cao nhất */
+.rib-bar.is-peak {
+    background: linear-gradient(180deg, #dc2626 0%, #7f1d1d 100%);
+    opacity: 1;
+}
+
+.capture-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+/* Số liệu tóm tắt */
+.capture-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 16px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.stat-num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--text-highlight);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+
+.stat-num.is-threat {
+    color: var(--neon-rose);
+}
+
+.stat-num.is-high {
+    color: var(--neon-rose);
+    font-size: 1.2rem;
+}
+
+.stat-num.is-mod {
+    color: var(--neon-amber);
+    font-size: 1.2rem;
+}
+
+.stat-lab {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.capture-peak {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
+
+.capture-scale {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-muted);
+}
+
+.capture-axis-note {
+    margin-top: 3px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.66rem;
+    color: var(--text-muted);
+}
+
+/* Hàng đợi xem xét */
+.review-panel {
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+.review-head {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.review-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 14px;
+}
+
+.review-rule {
+    display: grid;
+    grid-template-columns: 82px 210px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.025);
+    border-left: 2px solid var(--border-accent);
+}
+
+.rr-val {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.rr-key {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.rr-why {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.review-note {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    padding: 8px 0 0;
+}
+
+.review-note strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.review-note.is-warn {
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-left: 2px solid rgba(220, 38, 38, 0.6);
+    background: rgba(220, 38, 38, 0.07);
+    color: var(--text-main);
+}
+
+@media (max-width: 900px) {
+    .review-rule {
+        grid-template-columns: 72px 1fr;
+    }
+
+    .review-rule .rr-why {
+        grid-column: 2;
+    }
+}
+
+/* Thẻ chỉ số thời gian thực */
+.metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.metric-card.pulse {
+    border-color: var(--border-accent);
+}
+
+.metric-value {
+    margin: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--text-highlight);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+
+.metric-label {
+    margin: 2px 0 0;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+}
+
+/* Tiêu đề hàng đợi */
+div[data-testid="stExpander"]:has(summary:first-of-type) summary p,
+div[data-testid="stExpander"] summary p {
+    font-weight: 600 !important;
+    color: var(--text-highlight) !important;
+}
+
+/* Màu mức độ ưu tiên */
+.review-rule.is-ok {
+    border-left-color: rgba(107, 142, 159, 0.75);
+}
+
+.review-rule.is-info {
+    border-left-color: rgba(251, 191, 36, 0.75);
+}
+
+.review-rule.is-warn {
+    border-left-color: rgba(220, 38, 38, 0.8);
+    background: rgba(220, 38, 38, 0.06);
+}
+
+.review-rule.is-ok .rr-key,
+.review-rule.is-info .rr-key,
+.review-rule.is-warn .rr-key {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+/* Tiêu đề cột có chú thích */
+.alert-table th[title]:not([title=""]) {
+    text-decoration: underline dotted var(--text-muted);
+    text-underline-offset: 3px;
+    cursor: help;
+}
+
+/* Chú giải đồ thị */
+.graph-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 2px 12px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+.gl-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gl-dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+}
+
+.gl-line {
+    display: inline-block;
+    width: 18px;
+    height: 2px;
+    border-radius: 1px;
+}
+
+.gl-sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* Các luồng đáng chú ý quanh mục tiêu */
+.top-attacks-head {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 4px 0 8px;
+}
+
+.top-attack-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 10px;
+    border-left: 2px solid rgba(220, 38, 38, 0.65);
+    background: rgba(220, 38, 38, 0.06);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+}
+
+.ta-peer {
+    color: var(--text-highlight);
+    font-weight: 600;
+}
+
+.ta-type {
+    color: var(--neon-cyan);
+}
+
+.ta-att {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Nút thu gọn thanh bên */
+[data-testid="stSidebarCollapseButton"] button,
+button[kind="headerNoPadding"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 0.5;
+    width: 24px !important;
+    height: 40px !important;
+    min-width: 24px !important;
+    padding: 0 !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button:hover,
+button[kind="headerNoPadding"]:hover {
+    background: transparent !important;
+    opacity: 1;
+}
+
+/* Công tắc chủ đề */
+section[data-testid="stSidebar"] [data-testid="stCheckbox"] {
+    margin: -10px 0 8px !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stCheckbox"] label p,
+section[data-testid="stSidebar"] [data-testid="stCheckbox"] label span[data-testid="stMarkdownContainer"] p {
+    color: var(--text-muted) !important;
+    line-height: 1 !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stCheckbox"] label span[data-testid="stIconMaterial"] {
+    font-size: 19px !important;
+    color: var(--text-main) !important;
+    vertical-align: middle !important;
+}
+
+/* Biểu tượng trạng thái luồng */
+.alert-table .edge-ico {
+    font-size: 15px !important;
+    vertical-align: -3px;
+    margin-right: 6px;
+    color: var(--table-dim);
+}
+
+.alert-table .c-attack.is-atk .edge-ico {
+    color: var(--neon-rose);
+}
+
+.alert-table .c-attack.is-atk {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Canh công tắc chủ đề với nhãn chế độ. */
+section[data-testid="stSidebar"] [data-testid="stHorizontalBlock"]:has([data-testid="stCheckbox"]) {
+    margin-bottom: -46px !important;
+    position: relative;
+    top: 14px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+section[data-testid="stSidebar"] [data-testid="stHorizontalBlock"]:has([data-testid="stCheckbox"]) [data-testid="stCheckbox"] {
+    pointer-events: auto;
+    margin: 0 !important;
+}
+
+/* Bảng HTML nhận màu chủ đề. */
+.df-table .alert-table {
+    table-layout: auto;
+}
+
+.df-table .alert-table th,
+.df-table .alert-table td {
+    width: auto;
+    white-space: nowrap;
+}
+
+.df-table .alert-table td {
+    color: var(--text-main);
+}
+
+.df-table .alert-feed-body {
+    max-height: 420px;
+    overflow: auto;
+}
+
+.alert-feed-note {
+    padding: 8px 16px 10px;
+    border-top: 1px solid var(--border-subtle);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* Nút mở lại thanh bên */
+section[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
+[data-testid="stExpandSidebarButton"] {
+    position: fixed !important;
+    left: 4px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    z-index: 1000 !important;
+}
+
+/* Bỏ khung lồng trong expander */
+div[data-testid="stExpander"] .alert-feed {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-top: 0 !important;
+}
+
+div[data-testid="stExpander"] .alert-feed-head {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+div[data-testid="stExpander"] .alert-feed-body {
+    max-height: 460px;
+}
+
+/* Chỉ số theo nhãn thật của mẫu */
+.scored-panel {
+    margin: 14px 0 4px;
+    padding: 14px 18px 12px;
+    border: 1px solid var(--border-accent);
+    border-left: 3px solid var(--neon-amber);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.scored-head {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--neon-amber);
+}
+
+.scored-panel .capture-stats {
+    gap: 26px;
+    margin-top: 12px;
+}
+
+.scored-panel .stat-num {
+    font-size: 1.25rem;
+}
+
+.scored-note {
+    margin-top: 12px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}

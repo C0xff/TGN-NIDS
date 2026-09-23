@@ -1,0 +1,56 @@
+# ============================================================
+#  TGN-NIDS - Danh mục thư viện phụ thuộc
+#  Cài đặt: pip install -r requirements.txt
+#  Đã kiểm thử trên macOS (arm64) và Windows, Python 3.13.5.
+#  Kaggle chạy bản Python riêng của họ (3.12.13), không điều chỉnh được.
+# ============================================================
+
+# --- Xử lý dữ liệu ---
+numpy>=1.22.0
+pandas>=1.4.0
+# Ghim đúng 1.6.1: các checkpoint model_*.pt trong models/saved/ cất kèm trạng
+# thái StandardScaler và LabelEncoder do đúng bản này sinh ra. Chạy bản khác sẽ
+# hiện InconsistentVersionWarning khi nạp checkpoint, và về lý thuyết có thể
+# lệch hành vi nội bộ giữa các phiên bản sklearn.
+scikit-learn==1.6.1
+# Bắt buộc để đọc và ghi định dạng Parquet. Bộ dữ liệu thô trong data/raw/ ở
+# dạng Parquet, nên cả ba notebook, dashboard và các script phân tích đều gọi
+# pandas.read_parquet. Thiếu gói này thì lỗi xuất hiện ở bước nạp dữ liệu, dù
+# tên gói không hề có mặt trong bất kỳ lệnh import nào.
+pyarrow>=10.0.0
+
+# --- Học sâu trên đồ thị ---
+torch==2.10.*
+# Yêu cầu >=2.4: từ bản này PyG là thuần Python, KHÔNG cần biên dịch
+# torch-scatter và torch-sparse. Đây là khác biệt quan trọng trên Windows, nơi
+# việc biên dịch các gói đó thường thất bại nếu máy không có Visual C++ Build
+# Tools.
+torch-geometric==2.8.*
+
+# --- Trực quan hoá và dashboard ---
+streamlit>=1.12.0
+plotly>=5.0.0
+pyvis>=0.3.0
+networkx>=2.8.0
+# matplotlib là nền của tgn_nids.utils.figures, bộ biểu đồ đánh giá mà cả ba
+# notebook thí nghiệm đều gọi tới, nên không còn là phụ thuộc riêng của
+# dashboard.
+matplotlib>=3.5.0
+
+# --- Kiểm thử và kiểm toán ---
+pytest>=7.0.0
+# scripts/analysis/check_notebooks.py đọc tệp .ipynb qua nbformat để kiểm rằng notebook
+# còn là JSON hợp lệ và mọi ô mã còn phân tích cú pháp được.
+nbformat>=5.0.0
+
+# --- Chạy notebook tại máy ---
+# Mở notebook bằng "jupyter lab" cần cả nhân thực thi lẫn giao diện.
+# Kaggle đã có sẵn hai gói này trong ảnh chạy của họ.
+ipykernel>=6.0.0
+jupyterlab>=4.0.0
+
+
+# --- Tuỳ chọn: chỉ cần khi tải lại bộ dữ liệu thô ---
+# Bỏ qua được nếu đã có sẵn dữ liệu trong data/raw/.
+kagglehub>=0.2.0
+datasets>=3.0.0
