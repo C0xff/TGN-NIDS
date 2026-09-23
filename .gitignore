@@ -1,0 +1,45 @@
+# Chỉ công bố các thành phần được liệt kê bên dưới.
+/*
+
+# Tệp cấu hình ở thư mục gốc.
+!/.gitignore
+!/README.md
+!/requirements.txt
+!/pyproject.toml
+
+# Mã nguồn, ứng dụng, tài liệu kỹ thuật và kiểm thử.
+!/apps/
+!/docs/
+!/scripts/
+!/src/
+!/tests/
+!/.vscode/
+
+# Hồ sơ chính thức của trường chỉ lưu nội bộ.
+/docs/UIT_ho_so_chinh_thuc/
+
+# Chỉ công bố notebook đã thực thi và README đi kèm.
+!/notebooks/
+/notebooks/*
+!/notebooks/executed/
+!/notebooks/executed/README.md
+!/notebooks/executed/*.ipynb
+
+# Chỉ công bố danh mục trích dẫn, không phân phối bản toàn văn.
+!/references/
+/references/*
+!/references/TAI_LIEU_THAM_KHAO.md
+
+# Tệp phát sinh cục bộ bên trong các thư mục được công bố.
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+**/.ipynb_checkpoints/
+**/.DS_Store
+**/Thumbs.db
+**/desktop.ini
+**/.env
+**/*.pem
+**/*.key
