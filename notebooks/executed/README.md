@@ -28,5 +28,5 @@ Các notebook được giữ nguyên mã và đầu ra của lần chạy đã d
 cáo. Hãy xem chúng như bản ghi thực nghiệm. Không chạy lại hoặc chỉnh sửa trực
 tiếp vì các ô ghi kết quả có thể ghi đè đầu ra đã dùng trong báo cáo.
 
-Để thực thi đầy đủ, cần có dữ liệu, checkpoint và môi trường thí nghiệm trong
-gói Google Drive đi kèm. Các tài sản này không có trong kho GitHub công khai.
+Để đối chiếu đầy đủ, cần `data/` và `models/` trong gói Google Drive đi kèm.
+Môi trường Python được mô tả bằng `requirements.txt` trong kho GitHub.

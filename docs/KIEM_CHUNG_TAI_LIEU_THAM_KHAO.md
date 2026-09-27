@@ -9,8 +9,8 @@ công bố thì chép từ bảng trong bài gốc kèm số hiệu bảng và �
 loại không bao giờ trộn vào cùng một cột.
 
 Danh mục tài liệu tham khảo đang dùng nằm ở
-`reports/tai_lieu_tham_khao/TAI_LIEU_THAM_KHAO.md`, gồm 23 mục tách tiếng
-Việt và tiếng Anh, xếp alphabet theo Phụ lục 2.
+`references/TAI_LIEU_THAM_KHAO.md`, gồm 23 mục theo số hiệu trích dẫn của báo
+cáo.
 
 ---
 
