@@ -1,18 +1,24 @@
 # Kết quả đo lường
 
-**Tài liệu này được sinh tự động** bởi `scripts/tong_hop_ket_qua.py`,
+**Tài liệu này được sinh tự động** bởi `scripts/analysis/tong_hop_ket_qua.py`,
 đọc thẳng từ các tệp `result_*.json` của lần chạy thật. Không chép tay con
 số nào, nên tài liệu luôn khớp dữ liệu gốc. Chạy lại script sau mỗi
 notebook để cập nhật.
 
-Phần diễn giải và các phép đo không sinh ra từ notebook nằm ở cuối, trong
-mục *Các phép đo bổ trợ*. Quy tắc chọn ngưỡng và bảng tham số đã chốt xem `docs/SO_LIEU_DAU_RA_CHI_TIET.md`.
+Các phép đo không sinh ra từ notebook nằm ở cuối, trong mục *Các phép đo
+bổ trợ*. Mục đó cũng sinh tự động, đọc từ `models/supplementary/supplementary_measurements.json`
+do `scripts/analysis/supplementary_measurements.py` tạo ra và từ bảng tổng hợp thí nghiệm
+cắt bỏ. Riêng số liệu của các nghiên cứu đối sánh là trích dẫn, ghi kèm bảng
+và điều kiện đo của bài báo gốc. Quy tắc chọn ngưỡng và bảng tham số đã chốt
+xem `docs/SO_LIEU_DAU_RA_CHI_TIET.md`.
 
 Số thí nghiệm đã có kết quả: **14**.
 
 ## Thư mục `saved`
 
 ### Điều kiện chạy
+
+Mọi lần chạy dùng hạt giống 42, GPU Tesla T4 trên Kaggle. Giao thức `chronological_80_10_10` sắp luồng theo `FLOW_START_MILLISECONDS` rồi cắt liên tục 80/10/10. Giao thức `graphids` chia phân tầng theo cột `Attack` với hạt giống 42, cũng theo tỷ lệ 80/10/10. Ở giai đoạn một (`self_supervised`), luồng tấn công bị loại khỏi tập train nên cột Train chỉ đếm luồng Benign. Mọi chỉ số bên dưới đo trên tập test ghi ở cột Test, bộ tiền xử lý khớp trên tập train của chính lần chạy đó.
 
 | Cấu hình | Mã nguồn | Protocol | Task | Mode | Lấy mẫu | Train | Test | Edge features |
 |---|---|---|---|---|---:|---:|---:|---:|
@@ -54,6 +60,8 @@ Số thí nghiệm đã có kết quả: **14**.
 
 Cột **mốc tầm thường** là điểm F1 mà một bộ phân loại gán nhãn tấn công cho mọi mẫu sẽ đạt được, tính bằng `2·rate/(1+rate)` với `rate` là tỷ lệ mẫu tấn công của tập kiểm thử. Mục 2.5 bộ quy tắc dự án buộc mọi chỉ số F1 nhị phân phải đứng cạnh mốc này: thiếu nó, một giá trị F1 cao vẫn có thể nằm dưới mức đoán bừa không cần mô hình.
 
+Điều kiện đo: điểm bất thường là sai số tái thiết của giai đoạn một. Ngưỡng chọn trên tập validation sao cho Macro F1 hai lớp lớn nhất, rồi áp nguyên lên tập test. PR-AUC là average precision, ROC-AUC tính trên điểm bất thường, hai chỉ số này không phụ thuộc ngưỡng. FAR là tỷ lệ luồng Benign bị gán tấn công.
+
 | Cấu hình | f1 | f1_macro | precision | recall | far | pr_auc | roc_auc | accuracy | balanced_accuracy | mốc tầm thường | f1 trừ mốc |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | `stage1_nf_cse_cic_ids2018_v3` | 23,994% | 55,556% | 21,663% | 26,887% | 14,441% | 18,147% | 64,701% | 77,971% | 56,223% | 22,903% | +1,091% |
@@ -69,6 +77,8 @@ Cột **mốc tầm thường** là điểm F1 mà một bộ phân loại gán 
 Giá trị trung bình macro trên toàn bộ các lớp của từng bộ dữ liệu. Số lớp không giống nhau giữa các cấu hình trong bảng, hiện là 10 hoặc 15, nên hai giá trị macro của hai bộ khác nhau không phải hai phép đo cùng thang.
 
 Cột cuối là **recall của lớp tấn công**, đo trên bài toán nhị phân quy đổi: trong toàn bộ luồng tấn công thật, mô hình gọi đúng tên một lớp tấn công nào đó cho bao nhiêu phần. Con số này bắt buộc đi kèm mọi chỗ hiển thị Macro F1, vì Macro F1 có thể cao nhờ riêng lớp lành tính trong khi bộ phát hiện đang bỏ sót phần lớn số cuộc tấn công.
+
+Điều kiện đo: nhãn dự đoán là lớp có xác suất lớn nhất (argmax), không dùng ngưỡng. Encoder của giai đoạn một được đóng băng, chỉ classification head được huấn luyện trên tập train có nhãn.
 
 | Cấu hình | f1_macro | precision_macro | recall_macro | far_macro | accuracy | recall lớp tấn công (nhị phân quy đổi) |
 |---|---|---|---|---|---|---|
@@ -256,85 +266,75 @@ Ngưỡng luôn chọn trên tập validation rồi mới áp lên tập test. �
 - `stage2_unsw_v3_no_propagation`: Analysis=1.6314, Backdoor=0.7874, Benign=0.034, DoS=0.714, Exploits=0.2699, Fuzzers=0.2978, Generic=0.4028, Reconnaissance=0.431, Shellcode=1.0793, Worms=4.3525
 - `stage2_unsw_v3_random_nodes`: Analysis=1.6314, Backdoor=0.7874, Benign=0.034, DoS=0.714, Exploits=0.2699, Fuzzers=0.2978, Generic=0.4028, Reconnaissance=0.431, Shellcode=1.0793, Worms=4.3525
 
-
 ---
 
 # Các phép đo bổ trợ
 
-Những con số dưới đây không sinh ra từ notebook mà đo riêng trong quá trình
-chẩn đoán. Mỗi mục ghi rõ cách đo để kiểm chứng lại được.
+Những con số dưới đây không sinh ra từ notebook huấn luyện. Mục 1 và 2 đọc từ `models/supplementary/supplementary_measurements.json`, tệp do `scripts/analysis/supplementary_measurements.py` sinh ra khi chạy trên CPU với dữ liệu gốc. Mục 3 đọc từ bảng tổng hợp thí nghiệm cắt bỏ. Mục 4 là số liệu trích từ các bài báo. Mỗi mục ghi điều kiện đo ngay đầu mục.
 
-## 1. Bài toán binary trên NF-UNSW-NB15-v3 đã được giải sẵn
+## 1. Lối tắt trong dữ liệu NF-UNSW-NB15-v3
 
-Đo trên toàn bộ 2.365.424 luồng, không huấn luyện gì:
+**Điều kiện đo.** Toàn bộ 2.365.424 luồng, không chia tập, không huấn luyện gì. TTL dùng giá trị thô chưa chuẩn hoá, ROC-AUC lấy chính giá trị MAX_TTL làm điểm của lớp tấn công. Báo cáo dùng ở mục 4.9.1.
 
 | Phép đo | Kết quả |
 |---|---|
-| Địa chỉ nguồn chỉ sinh lưu lượng tấn công | 4 địa chỉ, dải `175.45.176.0/30` |
-| Địa chỉ nguồn chỉ sinh lưu lượng benign | 36 |
+| Số luồng | 2.365.424 |
+| Địa chỉ nguồn chỉ sinh lưu lượng tấn công | 4 địa chỉ: `175.45.176.0`, `175.45.176.1`, `175.45.176.2`, `175.45.176.3` |
+| Địa chỉ nguồn chỉ sinh lưu lượng Benign | 36 |
 | Địa chỉ nguồn sinh cả hai loại | **0** |
-| Quy tắc chỉ xét địa chỉ nguồn | **sai 0 luồng trên 2.365.424** |
-| `MAX_TTL` dùng một mình làm bộ phân loại | AUC **0,9986** |
-| `MIN_TTL` dùng một mình | AUC 0,9985 |
+| `MAX_TTL` phổ biến nhất, lớp Benign | 32 |
+| `MAX_TTL` phổ biến nhất, lớp tấn công | 255 |
+| ROC-AUC khi dùng riêng `MAX_TTL` | 0,9984 |
 
-Phân bố TTL: lưu lượng benign tập trung ở giá trị 32, lưu lượng tấn công tập
-trung ở 255.
+## 2. Mốc tham chiếu dạng bảng, không dùng đồ thị
 
-## 2. Mốc tham chiếu bảng, không dùng đồ thị
+**Điều kiện đo.** Giao thức TE-G-SAGE của dự án (split_te_g_sage): sắp theo FLOW_START_MILLISECONDS, chia liên tục 60/30/10, huấn luyện trên tập train, đo trên tập test. Thuộc tính qua NetFlowPreprocessor khớp trên tập train, không có địa chỉ IP và mốc thời gian. Nhãn là cột Label hai lớp. Tập validation không dùng. Ngưỡng mặc định của predict(). Bộ thuộc tính gồm 49 cột, scikit-learn 1.9.1. Báo cáo dùng ở bảng 4.24, làm tròn hai chữ số thập phân cho F1 và PR-AUC, bốn chữ số cho FAR.
 
-Toàn bộ dữ liệu, đúng giao thức chia tập của TE-G-SAGE, chỉ dùng 49 thuộc tính
-luồng mạng, không biết gì về địa chỉ mạng:
+| Tập | Số luồng | Số luồng tấn công |
+|---|---:|---:|
+| train | 1.419.254 | 42.459 |
+| val | 709.628 | 65.138 |
+| test | 236.542 | 20.096 |
 
-| Mô hình | F1 | FAR | PR-AUC |
-|---|---:|---:|---:|
-| Cây quyết định sâu 3, đủ thuộc tính | **99,79%** | 0,0333% | 99,80% |
-| Cây quyết định sâu 3, bỏ `MIN_TTL` và `MAX_TTL` | **99,55%** | 0,0661% | 99,14% |
-| Hồi quy logistic, đủ thuộc tính | 99,49% | 0,0305% | 99,80% |
-| *TE-G-SAGE công bố* | *99,52%* | *0,0900%* | *không công bố* |
-| *GraphIDS công bố* | *không công bố* | *không công bố* | *99,98%* |
+| Mô hình | Cấu hình | F1 lớp tấn công | FAR | PR-AUC |
+|---|---|---:|---:|---:|
+| Cây quyết định sâu 3, đủ thuộc tính | `DecisionTreeClassifier(max_depth=3, random_state=42)` | 99,794% | 0,0333% | 99,797% |
+| Cây quyết định sâu 3, bỏ `MIN_TTL` và `MAX_TTL` | `DecisionTreeClassifier(max_depth=3, random_state=42), bỏ MIN_TTL và MAX_TTL` | 99,551% | 0,0661% | 99,137% |
+| Hồi quy logistic, đủ thuộc tính | `LogisticRegression(max_iter=1000), tham số còn lại mặc định` | 99,566% | 0,018% | 99,769% |
 
-Toàn bộ quy tắc của một cây sâu hai tầng:
+Thời gian chạy script: 28,6 giây.
 
-```
-MIN_TTL <= 1.52  ->  MAX_IP_PKT_LEN <= 1.27 ? Benign : Attack
-MIN_TTL >  1.52  ->  PROTOCOL       <= -3.14 ? Benign : Attack
-```
+## 3. Thí nghiệm cắt bỏ kiến trúc
 
-Phép đo này nằm trong notebook 05 nên tái lập được.
+**Điều kiện đo.** Bốn cấu hình huấn luyện lại từ đầu qua cả hai giai đoạn trên NF-UNSW-NB15-v3, cùng một phiên, cùng hạt giống 42, giao thức `chronological_80_10_10`. Macro F1 đo trên bài toán nhiều lớp. Recall, F1 và FAR của lớp tấn công đo trên bài toán hai lớp quy đổi. Mỗi cấu hình chạy **một lần**, nên chênh lệch dưới 1 điểm chưa tách khỏi dao động giữa các lần chạy. Nguồn: `models/saved/twoDTS_ablation/08_tong_hop/tables/ablation_summary.csv`. Báo cáo dùng ở mục 4.6.
 
-## 3. Ablation kiến trúc
+| Cấu hình | Chiều cạnh | Macro F1 | Chênh lệch Macro F1 | Recall tấn công | F1 tấn công | FAR |
+|---|---:|---:|---:|---:|---:|---:|
+| `baseline` | 49 | 54,936% | 0,000 điểm | 99,98% | 99,923% | 0,012% |
+| `random_nodes` | 49 | 52,109% | -2,827 điểm | 99,945% | 99,903% | 0,013% |
+| `no_iat` | 41 | 54,616% | -0,320 điểm | 99,975% | 99,705% | 0,053% |
+| `no_propagation` | 49 | 54,444% | -0,492 điểm | 99,98% | 99,873% | 0,022% |
 
-Bốn cấu hình đã chạy trên NF-UNSW-NB15-v3, mỗi cấu hình huấn luyện lại từ đầu.
-Kết quả nằm ở `models/saved/twoDTS_ablation/`, bảng đầy đủ kèm điều kiện đo ở
-`docs/SO_LIEU_DAU_RA_CHI_TIET.md`, mục thực nghiệm cắt bỏ kiến trúc.
-
-Mức đóng góp đo được, tính bằng điểm phần trăm Macro F1 so với mốc đối chiếu:
-danh tính đỉnh 2,827 điểm, phép tổng hợp lân cận 0,492 điểm, tám cột đặc trưng
-thời gian IAT 0,320 điểm.
-
-Cả ba giá trị đo trên **một hạt giống duy nhất**, nên hai con số nhỏ chưa tách
-khỏi dao động giữa các lần chạy và phải trích kèm giới hạn phát hiện. Mở rộng
-sang nhiều hạt giống thuộc Hướng phát triển, ghi ở mục 6
-`docs/THUC_NGHIEM_CAT_BO_KIEN_TRUC.md`.
-
-Phép triệt tiêu từng đặc trưng ở mục trên là công cụ giải thích, không phải
-ablation kiến trúc, và không trả lời được câu hỏi về đóng góp của thành phần
-kiến trúc.
+Phép triệt tiêu từng thuộc tính ở mục 4.7.1 là công cụ giải thích, không phải thí nghiệm cắt bỏ kiến trúc.
 
 ## 4. Số liệu do các nghiên cứu đối sánh công bố
 
-Trích trực tiếp từ bản gốc trong `references/`.
+**Điều kiện đo.** Trích nguyên từ bản gốc trong `references/`, không đo lại. Số hiệu tài liệu theo danh mục của báo cáo.
 
-| Nghiên cứu | Bộ | Bài toán | Chỉ số |
-|---|---|---|---|
-| GraphIDS | v3 | binary | Macro F1 99,61% · PR-AUC 99,98% |
-| GraphIDS | v2 | binary | Macro F1 92,64% · PR-AUC 81,16% |
-| TE-G-SAGE | v3 | binary | P 99,06% · R 99,99% · F1 99,52% · FAR 0,09% |
-| TE-G-SAGE | v3 | multiclass | Acc 95,59% · P 49,42% · R 62,74% · Macro F1 49,06% · FAR 0,45% |
-| Anomal-E + IF | v2 | binary | Acc 98,66% · Macro F1 92,35% · DR 98,77% |
+| Nguồn | Bộ dữ liệu | Bài toán | Chỉ số | Điều kiện đo của bài báo |
+|---|---|---|---|---|
+| GraphIDS [10], Bảng 3 | NF-UNSW-NB15-v3 | hai lớp | Macro F1 99,61% ± 0,84% · PR-AUC 99,98% ± 0,07% | phân tầng ngẫu nhiên 80/10/10, trung bình nhiều hạt giống |
+| GraphIDS [10], Bảng 3 | NF-UNSW-NB15-v2 | hai lớp | Macro F1 92,64% ± 2,17% · PR-AUC 81,16% ± 3,67% | như trên |
+| GraphIDS [10], Bảng 3 | NF-CSE-CIC-IDS2018-v3 | hai lớp | Macro F1 94,47% ± 2,13% · PR-AUC 88,19% ± 3,47% | như trên, toàn bộ dữ liệu |
+| Anomal-E, do GraphIDS [10] đo lại, Bảng 3 | NF-UNSW-NB15-v3 | hai lớp | Macro F1 94,59% ± 0,09% · PR-AUC 90,32% ± 0,41% | như GraphIDS, biến thể tốt nhất theo PR-AUC |
+| Anomal-E, do GraphIDS [10] đo lại, Bảng 3 | NF-UNSW-NB15-v2 | hai lớp | Macro F1 91,56% ± 2,17% · PR-AUC 74,89% ± 0,74% | như trên |
+| Anomal-E, do GraphIDS [10] đo lại, Bảng 3 | NF-CSE-CIC-IDS2018-v3 | hai lớp | Macro F1 67,09% ± 3,94% · PR-AUC 25,55% ± 3,83% | như trên, toàn bộ dữ liệu |
+| TE-G-SAGE [14] | NF-UNSW-NB15-v3 | hai lớp | P 99,06% · R 99,99% · F1 99,52% · FAR 0,09% | chia theo thời gian 60/30/10 |
+| TE-G-SAGE [14], Bảng 7 | NF-UNSW-NB15-v3 | nhiều lớp | Acc 95,586% · P 49,419% · R 62,738% · Macro F1 49,057% · FAR 0,446% | chia theo thời gian 60/30/10 |
+| GCN, trong TE-G-SAGE [14], Bảng 7 | NF-UNSW-NB15-v3 | nhiều lớp | Acc 97,257% · P 39,587% · R 39,477% · Macro F1 38,781% · FAR 0,301% | như trên |
+| XGBoost, trong TE-G-SAGE [14], Bảng 7 | NF-UNSW-NB15-v3 | nhiều lớp | Acc 97,338% · P 68,957% · R 55,742% · Macro F1 56,782% · FAR 0,273% | như trên |
+| Anomal-E-IF, bài gốc [4], Bảng 4 và 8 | NF-UNSW-NB15-v2 | hai lớp | Acc 98,66% · Macro F1 92,35% · DR 98,77% | giao thức riêng của Anomal-E, 4% nhiễm tấn công trong tập huấn luyện, báo cáo không dùng |
 
-TE-G-SAGE theo lớp, bài toán multiclass: Analysis 0,305 · Backdoor 0,071 ·
-Benign 1,000 · DoS 0,260 · Exploits 0,613 · Fuzzers 0,501 · Generic 0,796 ·
-Reconnaissance 0,579 · Shellcode 0,221 · Worms 0,500.
+TE-G-SAGE theo lớp, bài toán nhiều lớp, F1: Analysis 0,305 · Backdoor 0,071 · Benign 1,000 · DoS 0,260 · Exploits 0,613 · Fuzzers 0,501 · Generic 0,796 · Reconnaissance 0,579 · Shellcode 0,221 · Worms 0,500.
 
 TCG-IDS chưa có bản gốc nên **không trích số nào**.

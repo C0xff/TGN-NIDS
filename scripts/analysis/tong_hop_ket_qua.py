@@ -6,7 +6,7 @@ Mọi con số trong tài liệu sinh ra đều đọc thẳng từ tệp kết 
 thật, không chép tay, nên không có nguy cơ sai lệch giữa báo cáo và dữ liệu
 gốc. Chạy lại script sau mỗi notebook để tài liệu luôn khớp.
 
-    python3 scripts/tong_hop_ket_qua.py
+    python3 scripts/analysis/tong_hop_ket_qua.py
 """
 
 import glob
@@ -235,6 +235,14 @@ def write_run_section(out, name, entries):
         out.append("")
 
     out.append("### Điều kiện chạy\n")
+    out.append(
+        "Mọi lần chạy dùng hạt giống 42, GPU Tesla T4 trên Kaggle. Giao thức "
+        "`chronological_80_10_10` sắp luồng theo `FLOW_START_MILLISECONDS` rồi "
+        "cắt liên tục 80/10/10. Giao thức `graphids` chia phân tầng theo cột "
+        "`Attack` với hạt giống 42, cũng theo tỷ lệ 80/10/10. Ở giai đoạn một "
+        "(`self_supervised`), luồng tấn công bị loại khỏi tập train nên cột Train "
+        "chỉ đếm luồng Benign. Mọi chỉ số bên dưới đo trên tập test ghi ở cột "
+        "Test, bộ tiền xử lý khớp trên tập train của chính lần chạy đó.\n")
     out.append("| Cấu hình | Mã nguồn | Protocol | Task | Mode | "
                "Lấy mẫu | Train | Test | Edge features |")
     out.append("|---|---|---|---|---|---:|---:|---:|---:|")
@@ -268,6 +276,12 @@ def write_run_section(out, name, entries):
             "quy tắc dự án buộc mọi chỉ số F1 nhị phân phải đứng cạnh mốc "
             "này: thiếu nó, một giá trị F1 cao vẫn có thể nằm dưới mức đoán "
             "bừa không cần mô hình.\n")
+        out.append(
+            "Điều kiện đo: điểm bất thường là sai số tái thiết của giai đoạn "
+            "một. Ngưỡng chọn trên tập validation sao cho Macro F1 hai lớp lớn "
+            "nhất, rồi áp nguyên lên tập test. PR-AUC là average precision, "
+            "ROC-AUC tính trên điểm bất thường, hai chỉ số này không phụ thuộc "
+            "ngưỡng. FAR là tỷ lệ luồng Benign bị gán tấn công.\n")
         out.append("| Cấu hình | " + " | ".join(BINARY_METRICS)
                    + " | mốc tầm thường | f1 trừ mốc |")
         out.append("|---" * (len(BINARY_METRICS) + 3) + "|")
@@ -299,6 +313,10 @@ def write_run_section(out, name, entries):
             "bắt buộc đi kèm mọi chỗ hiển thị Macro "
             "F1, vì Macro F1 có thể cao nhờ riêng lớp lành tính trong khi bộ "
             "phát hiện đang bỏ sót phần lớn số cuộc tấn công.\n")
+        out.append(
+            "Điều kiện đo: nhãn dự đoán là lớp có xác suất lớn nhất (argmax), "
+            "không dùng ngưỡng. Encoder của giai đoạn một được đóng băng, chỉ "
+            "classification head được huấn luyện trên tập train có nhãn.\n")
         out.append("| Cấu hình | " + " | ".join(MULTICLASS_METRICS)
                    + " | recall lớp tấn công (nhị phân quy đổi) |")
         out.append("|---" * (len(MULTICLASS_METRICS) + 2) + "|")
@@ -397,13 +415,16 @@ def build_document():
     out = [
         "# Kết quả đo lường",
         "",
-        "**Tài liệu này được sinh tự động** bởi `scripts/tong_hop_ket_qua.py`,",
+        "**Tài liệu này được sinh tự động** bởi `scripts/analysis/tong_hop_ket_qua.py`,",
         "đọc thẳng từ các tệp `result_*.json` của lần chạy thật. Không chép tay con",
         "số nào, nên tài liệu luôn khớp dữ liệu gốc. Chạy lại script sau mỗi",
         "notebook để cập nhật.",
         "",
-        "Phần diễn giải và các phép đo không sinh ra từ notebook nằm ở cuối, trong",
-        "mục *Các phép đo bổ trợ*. Quy tắc chọn ngưỡng và bảng tham số đã chốt "
+        "Các phép đo không sinh ra từ notebook nằm ở cuối, trong mục *Các phép đo",
+        "bổ trợ*. Mục đó cũng sinh tự động, đọc từ `models/supplementary/supplementary_measurements.json`",
+        "do `scripts/analysis/supplementary_measurements.py` tạo ra và từ bảng tổng hợp thí nghiệm",
+        "cắt bỏ. Riêng số liệu của các nghiên cứu đối sánh là trích dẫn, ghi kèm bảng",
+        "và điều kiện đo của bài báo gốc. Quy tắc chọn ngưỡng và bảng tham số đã chốt",
         "xem `docs/SO_LIEU_DAU_RA_CHI_TIET.md`.",
         "",
         f"Số thí nghiệm đã có kết quả: **{sum(len(v) for v in grouped.values())}**.",
@@ -415,94 +436,124 @@ def build_document():
     return "\n".join(out) + "\n"
 
 
-MANUAL_SECTION = """
+SUPPLEMENT_PATH = os.path.join(PROJECT_ROOT, "models", "supplementary", "supplementary_measurements.json")
+ABLATION_PATH = os.path.join(PROJECT_ROOT, "models", "saved", "twoDTS_ablation", "08_tong_hop",
+                             "tables", "ablation_summary.csv")
 
----
+# Số liệu của các nghiên cứu đối sánh là trích dẫn, không đo được, nên đây là
+# phần duy nhất ghi tay. Mỗi dòng ghi kèm bảng gốc và điều kiện đo của bài báo.
+PUBLISHED = [
+    ("GraphIDS [10], Bảng 3", "NF-UNSW-NB15-v3", "hai lớp",
+     "Macro F1 99,61% ± 0,84% · PR-AUC 99,98% ± 0,07%",
+     "phân tầng ngẫu nhiên 80/10/10, trung bình nhiều hạt giống"),
+    ("GraphIDS [10], Bảng 3", "NF-UNSW-NB15-v2", "hai lớp",
+     "Macro F1 92,64% ± 2,17% · PR-AUC 81,16% ± 3,67%", "như trên"),
+    ("GraphIDS [10], Bảng 3", "NF-CSE-CIC-IDS2018-v3", "hai lớp",
+     "Macro F1 94,47% ± 2,13% · PR-AUC 88,19% ± 3,47%", "như trên, toàn bộ dữ liệu"),
+    ("Anomal-E, do GraphIDS [10] đo lại, Bảng 3", "NF-UNSW-NB15-v3", "hai lớp",
+     "Macro F1 94,59% ± 0,09% · PR-AUC 90,32% ± 0,41%", "như GraphIDS, biến thể tốt nhất theo PR-AUC"),
+    ("Anomal-E, do GraphIDS [10] đo lại, Bảng 3", "NF-UNSW-NB15-v2", "hai lớp",
+     "Macro F1 91,56% ± 2,17% · PR-AUC 74,89% ± 0,74%", "như trên"),
+    ("Anomal-E, do GraphIDS [10] đo lại, Bảng 3", "NF-CSE-CIC-IDS2018-v3", "hai lớp",
+     "Macro F1 67,09% ± 3,94% · PR-AUC 25,55% ± 3,83%", "như trên, toàn bộ dữ liệu"),
+    ("TE-G-SAGE [14]", "NF-UNSW-NB15-v3", "hai lớp",
+     "P 99,06% · R 99,99% · F1 99,52% · FAR 0,09%", "chia theo thời gian 60/30/10"),
+    ("TE-G-SAGE [14], Bảng 7", "NF-UNSW-NB15-v3", "nhiều lớp",
+     "Acc 95,586% · P 49,419% · R 62,738% · Macro F1 49,057% · FAR 0,446%", "chia theo thời gian 60/30/10"),
+    ("GCN, trong TE-G-SAGE [14], Bảng 7", "NF-UNSW-NB15-v3", "nhiều lớp",
+     "Acc 97,257% · P 39,587% · R 39,477% · Macro F1 38,781% · FAR 0,301%", "như trên"),
+    ("XGBoost, trong TE-G-SAGE [14], Bảng 7", "NF-UNSW-NB15-v3", "nhiều lớp",
+     "Acc 97,338% · P 68,957% · R 55,742% · Macro F1 56,782% · FAR 0,273%", "như trên"),
+    ("Anomal-E-IF, bài gốc [4], Bảng 4 và 8", "NF-UNSW-NB15-v2", "hai lớp",
+     "Acc 98,66% · Macro F1 92,35% · DR 98,77%",
+     "giao thức riêng của Anomal-E, 4% nhiễm tấn công trong tập huấn luyện, báo cáo không dùng"),
+]
 
-# Các phép đo bổ trợ
 
-Những con số dưới đây không sinh ra từ notebook mà đo riêng trong quá trình
-chẩn đoán. Mỗi mục ghi rõ cách đo để kiểm chứng lại được.
+def vn(value, digits):
+    """Số thập phân kiểu Việt Nam, dùng cho những chỉ số không phải phần trăm."""
+    return f"{value:.{digits}f}".replace(".", ",")
 
-## 1. Bài toán binary trên NF-UNSW-NB15-v3 đã được giải sẵn
 
-Đo trên toàn bộ 2.365.424 luồng, không huấn luyện gì:
+def manual_section():
+    """Mục các phép đo bổ trợ, dựng từ tệp kết quả đã lưu thay vì chép tay."""
+    import csv
+    out = ["", "---", "", "# Các phép đo bổ trợ", "",
+           "Những con số dưới đây không sinh ra từ notebook huấn luyện. Mục 1 và 2 "
+           "đọc từ `models/supplementary/supplementary_measurements.json`, tệp do "
+           "`scripts/analysis/supplementary_measurements.py` sinh ra khi chạy trên CPU với "
+           "dữ liệu gốc. Mục 3 đọc từ bảng tổng hợp thí nghiệm cắt bỏ. Mục 4 là "
+           "số liệu trích từ các bài báo. Mỗi mục ghi điều kiện đo ngay đầu mục.", ""]
+    if not os.path.exists(SUPPLEMENT_PATH):
+        out += ["> Chưa có `models/supplementary/supplementary_measurements.json`. Chạy "
+                "`python scripts/analysis/supplementary_measurements.py` trước.", ""]
+    else:
+        with open(SUPPLEMENT_PATH, encoding="utf-8") as handle:
+            sup = json.load(handle)
+        loi_tat, moc = sup["data_shortcuts"], sup["tabular_baselines"]
+        dia_chi = ", ".join(f"`{a}`" for a in loi_tat["attack_only_sources"])
+        out += ["## 1. Lối tắt trong dữ liệu NF-UNSW-NB15-v3", "",
+                f"**Điều kiện đo.** {loi_tat['condition']} Báo cáo dùng ở mục 4.9.1.", "",
+                "| Phép đo | Kết quả |", "|---|---|",
+                f"| Số luồng | {so_nguyen(loi_tat['n_flows'])} |",
+                f"| Địa chỉ nguồn chỉ sinh lưu lượng tấn công | "
+                f"{len(loi_tat['attack_only_sources'])} địa chỉ: {dia_chi} |",
+                f"| Địa chỉ nguồn chỉ sinh lưu lượng Benign | {loi_tat['n_benign_only_sources']} |",
+                f"| Địa chỉ nguồn sinh cả hai loại | **{loi_tat['n_mixed_sources']}** |",
+                f"| `MAX_TTL` phổ biến nhất, lớp Benign | {loi_tat['max_ttl_mode_benign']} |",
+                f"| `MAX_TTL` phổ biến nhất, lớp tấn công | {loi_tat['max_ttl_mode_attack']} |",
+                f"| ROC-AUC khi dùng riêng `MAX_TTL` | {vn(loi_tat['max_ttl_roc_auc'], 4)} |",
+                "",
+                "## 2. Mốc tham chiếu dạng bảng, không dùng đồ thị", "",
+                f"**Điều kiện đo.** {moc['condition']} Bộ thuộc tính gồm {moc['n_features']} cột, "
+                f"scikit-learn {sup['scikit_learn']}. Báo cáo dùng ở bảng 4.24, làm tròn hai chữ số "
+                "thập phân cho F1 và PR-AUC, bốn chữ số cho FAR.", "",
+                "| Tập | Số luồng | Số luồng tấn công |", "|---|---:|---:|"]
+        for name, part in moc["splits"].items():
+            out.append(f"| {name} | {so_nguyen(part['n_flows'])} | {so_nguyen(part['n_attacks'])} |")
+        out += ["", "| Mô hình | Cấu hình | F1 lớp tấn công | FAR | PR-AUC |", "|---|---|---:|---:|---:|"]
+        for key, title in (("decision_tree_depth3_all_features", "Cây quyết định sâu 3, đủ thuộc tính"),
+                           ("decision_tree_depth3_without_ttl", "Cây quyết định sâu 3, bỏ `MIN_TTL` và `MAX_TTL`"),
+                           ("logistic_regression_all_features", "Hồi quy logistic, đủ thuộc tính")):
+            row = moc[key]
+            out.append(f"| {title} | `{row['model']}` | {percent(row['attack_f1'])} "
+                       f"| {percent(row['far'], 4)} | {percent(row['pr_auc'])} |")
+        out += ["", f"Thời gian chạy script: {vn(sup['runtime_seconds'], 1)} giây.", ""]
 
-| Phép đo | Kết quả |
-|---|---|
-| Địa chỉ nguồn chỉ sinh lưu lượng tấn công | 4 địa chỉ, dải `175.45.176.0/30` |
-| Địa chỉ nguồn chỉ sinh lưu lượng benign | 36 |
-| Địa chỉ nguồn sinh cả hai loại | **0** |
-| Quy tắc chỉ xét địa chỉ nguồn | **sai 0 luồng trên 2.365.424** |
-| `MAX_TTL` dùng một mình làm bộ phân loại | AUC **0,9986** |
-| `MIN_TTL` dùng một mình | AUC 0,9985 |
+    out += ["## 3. Thí nghiệm cắt bỏ kiến trúc", "",
+            "**Điều kiện đo.** Bốn cấu hình huấn luyện lại từ đầu qua cả hai giai đoạn trên "
+            "NF-UNSW-NB15-v3, cùng một phiên, cùng hạt giống 42, giao thức `chronological_80_10_10`. "
+            "Macro F1 đo trên bài toán nhiều lớp. Recall, F1 và FAR của lớp tấn công đo trên bài toán "
+            "hai lớp quy đổi. Mỗi cấu hình chạy **một lần**, nên chênh lệch dưới 1 điểm chưa tách khỏi "
+            "dao động giữa các lần chạy. Nguồn: `models/saved/twoDTS_ablation/08_tong_hop/tables/"
+            "ablation_summary.csv`. Báo cáo dùng ở mục 4.6.", "",
+            "| Cấu hình | Chiều cạnh | Macro F1 | Chênh lệch Macro F1 | Recall tấn công | F1 tấn công | FAR |",
+            "|---|---:|---:|---:|---:|---:|---:|"]
+    with open(ABLATION_PATH, encoding="utf-8-sig") as handle:
+        for row in csv.DictReader(handle):
+            delta = vn(float(row["delta_macro_f1_pp"]), 3)
+            out.append(f"| `{row['variant']}` | {row['edge_dim']} | {percent(float(row['f1_macro']))} "
+                       f"| {delta} điểm | {percent(float(row['attack_recall']))} "
+                       f"| {percent(float(row['attack_f1']))} | {percent(float(row['far']))} |")
+    out += ["", "Phép triệt tiêu từng thuộc tính ở mục 4.7.1 là công cụ giải thích, không phải "
+            "thí nghiệm cắt bỏ kiến trúc.", "",
+            "## 4. Số liệu do các nghiên cứu đối sánh công bố", "",
+            "**Điều kiện đo.** Trích nguyên từ bản gốc trong `references/`, không đo lại. Số hiệu "
+            "tài liệu theo danh mục của báo cáo.", "",
+            "| Nguồn | Bộ dữ liệu | Bài toán | Chỉ số | Điều kiện đo của bài báo |", "|---|---|---|---|---|"]
+    for row in PUBLISHED:
+        out.append("| " + " | ".join(row) + " |")
+    out += ["", "TE-G-SAGE theo lớp, bài toán nhiều lớp, F1: Analysis 0,305 · Backdoor 0,071 · "
+            "Benign 1,000 · DoS 0,260 · Exploits 0,613 · Fuzzers 0,501 · Generic 0,796 · "
+            "Reconnaissance 0,579 · Shellcode 0,221 · Worms 0,500.", "",
+            "TCG-IDS chưa có bản gốc nên **không trích số nào**.", ""]
+    return "\n".join(out)
 
-Phân bố TTL: lưu lượng benign tập trung ở giá trị 32, lưu lượng tấn công tập
-trung ở 255.
 
-## 2. Mốc tham chiếu bảng, không dùng đồ thị
-
-Toàn bộ dữ liệu, đúng giao thức chia tập của TE-G-SAGE, chỉ dùng 49 thuộc tính
-luồng mạng, không biết gì về địa chỉ mạng:
-
-| Mô hình | F1 | FAR | PR-AUC |
-|---|---:|---:|---:|
-| Cây quyết định sâu 3, đủ thuộc tính | **99,79%** | 0,0333% | 99,80% |
-| Cây quyết định sâu 3, bỏ `MIN_TTL` và `MAX_TTL` | **99,55%** | 0,0661% | 99,14% |
-| Hồi quy logistic, đủ thuộc tính | 99,49% | 0,0305% | 99,80% |
-| *TE-G-SAGE công bố* | *99,52%* | *0,0900%* | *không công bố* |
-| *GraphIDS công bố* | *không công bố* | *không công bố* | *99,98%* |
-
-Toàn bộ quy tắc của một cây sâu hai tầng:
-
-```
-MIN_TTL <= 1.52  ->  MAX_IP_PKT_LEN <= 1.27 ? Benign : Attack
-MIN_TTL >  1.52  ->  PROTOCOL       <= -3.14 ? Benign : Attack
-```
-
-Phép đo này nằm trong notebook 05 nên tái lập được.
-
-## 3. Ablation kiến trúc
-
-Bốn cấu hình đã chạy trên NF-UNSW-NB15-v3, mỗi cấu hình huấn luyện lại từ đầu.
-Kết quả nằm ở `models/saved/twoDTS_ablation/`, bảng đầy đủ kèm điều kiện đo ở
-`docs/SO_LIEU_DAU_RA_CHI_TIET.md`, mục thực nghiệm cắt bỏ kiến trúc.
-
-Mức đóng góp đo được, tính bằng điểm phần trăm Macro F1 so với mốc đối chiếu:
-danh tính đỉnh 2,827 điểm, phép tổng hợp lân cận 0,492 điểm, tám cột đặc trưng
-thời gian IAT 0,320 điểm.
-
-Cả ba giá trị đo trên **một hạt giống duy nhất**, nên hai con số nhỏ chưa tách
-khỏi dao động giữa các lần chạy và phải trích kèm giới hạn phát hiện. Mở rộng
-sang nhiều hạt giống thuộc Hướng phát triển, ghi ở mục 6
-`docs/THUC_NGHIEM_CAT_BO_KIEN_TRUC.md`.
-
-Phép triệt tiêu từng đặc trưng ở mục trên là công cụ giải thích, không phải
-ablation kiến trúc, và không trả lời được câu hỏi về đóng góp của thành phần
-kiến trúc.
-
-## 4. Số liệu do các nghiên cứu đối sánh công bố
-
-Trích trực tiếp từ bản gốc trong `references/`.
-
-| Nghiên cứu | Bộ | Bài toán | Chỉ số |
-|---|---|---|---|
-| GraphIDS | v3 | binary | Macro F1 99,61% · PR-AUC 99,98% |
-| GraphIDS | v2 | binary | Macro F1 92,64% · PR-AUC 81,16% |
-| TE-G-SAGE | v3 | binary | P 99,06% · R 99,99% · F1 99,52% · FAR 0,09% |
-| TE-G-SAGE | v3 | multiclass | Acc 95,59% · P 49,42% · R 62,74% · Macro F1 49,06% · FAR 0,45% |
-| Anomal-E + IF | v2 | binary | Acc 98,66% · Macro F1 92,35% · DR 98,77% |
-
-TE-G-SAGE theo lớp, bài toán multiclass: Analysis 0,305 · Backdoor 0,071 ·
-Benign 1,000 · DoS 0,260 · Exploits 0,613 · Fuzzers 0,501 · Generic 0,796 ·
-Reconnaissance 0,579 · Shellcode 0,221 · Worms 0,500.
-
-TCG-IDS chưa có bản gốc nên **không trích số nào**.
-"""
 
 
 if __name__ == "__main__":
-    document = build_document() + MANUAL_SECTION
+    document = build_document() + manual_section()
     # newline="\n" để tệp sinh ra giống nhau trên cả Windows lẫn macOS. Chế độ
     # văn bản mặc định của Windows đổi mọi dấu xuống dòng thành CRLF, nên chạy
     # script trên hai hệ điều hành sẽ cho hai tệp khác nhau ở từng dòng dù nội
