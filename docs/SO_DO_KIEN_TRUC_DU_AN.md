@@ -32,12 +32,11 @@ kiến trúc, giao thức đo và kết quả đã công bố.
 
 ```mermaid
 flowchart LR
-    subgraph DRIVE["Google Drive — tài sản không công bố trên GitHub"]
+    subgraph DRIVE["Google Drive — bốn thư mục không công bố trên GitHub"]
         DATA["data/<br/>NetFlow gốc, CSV/Parquet, tệp mẫu"]
-        SAVED["models/saved/<br/>checkpoint, chỉ số, bảng, hình"]
+        SAVED["models/<br/>checkpoint, chỉ số, bảng, hình"]
         DIST["dist/<br/>gói chuyển giao Kaggle"]
         REFS["references/<br/>toàn văn, RFC, bản trích xuất"]
-        REPORTS["reports/<br/>báo cáo Word và hình gốc"]
     end
 
     DATA --> SRC["Mã nguồn GitHub"]
@@ -45,9 +44,6 @@ flowchart LR
     SAVED --> DOCS["Tài liệu GitHub"]
     REFS --> DOCS
     DIST --> SCRIPTS["Script GitHub"]
-    SAVED --> REPORTS
-    DATA --> REPORTS
-    REFS --> REPORTS
 ```
 
 Các mũi tên biểu diễn quan hệ sử dụng hoặc đối chiếu, không phải cơ chế tự động
@@ -69,7 +65,10 @@ làm việc.
 | Nơi lưu | Vai trò |
 | --- | --- |
 | GitHub | Mã nguồn, kiểm thử, dashboard, script, tài liệu kỹ thuật và notebook đã thực thi. |
-| Google Drive | Dữ liệu lớn, checkpoint, kết quả đã chốt, gói bàn giao, báo cáo hoàn chỉnh và toàn văn tài liệu tham khảo. |
+| Google Drive | Bốn thư mục `data/`, `models/`, `references/`, `dist/`. |
+
+Báo cáo Word, hồ sơ của trường và các thư mục nội bộ không thuộc gói Google
+Drive được chia sẻ.
 
 Không ghi đè dữ liệu, checkpoint hoặc đầu ra đã chốt trong gói Drive khi chỉ
 cần kiểm tra hoặc trình bày lại kết quả.

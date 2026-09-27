@@ -52,9 +52,9 @@ luận TGN tốt hơn mô hình dạng bảng. Báo cáo dựa thêm vào bài t
 đánh giá ngoài phân phối và thí nghiệm cắt bỏ để phân tích vai trò của đồ thị.
 
 Điều kiện đo, kết quả theo lớp và các giới hạn thực nghiệm được trình bày trong
-[`docs/`](docs/README.md). Dữ liệu gốc, checkpoint, báo cáo Word và toàn văn
-tài liệu tham khảo được nhóm lưu trong gói Google Drive đi kèm, không nằm trong
-kho mã công khai.
+[`docs/`](docs/README.md). Gói Google Drive đi kèm chứa bốn thư mục `data/`,
+`models/`, `references/` và `dist/`; các thư mục này không nằm trong kho mã
+công khai.
 
 ## Dashboard
 
@@ -135,9 +135,10 @@ TGN-NIDS/
 | [`src/`](src/README.md) | Mã nguồn xử lý dữ liệu, mô hình, thực nghiệm và XAI |
 | [`tests/`](tests/README.md) | Kiểm thử các điều kiện ảnh hưởng đến tính đúng của kết quả |
 
-Dữ liệu thô, checkpoint, kết quả thực nghiệm gốc, gói phân phối, báo cáo Word, hồ sơ chính thức của
-trường và toàn văn tài liệu tham khảo không nằm trong kho công khai. Chúng được
-tổ chức riêng trong gói Google Drive của đồ án.
+Google Drive của đồ án chia sẻ dữ liệu, checkpoint, kết quả thực nghiệm, tài
+liệu toàn văn và gói Kaggle qua bốn thư mục `data/`, `models/`, `references/`,
+`dist/`. Báo cáo Word, hồ sơ của trường và các tệp nội bộ khác không thuộc gói
+được chia sẻ.
 
 ## Nhóm thực hiện
 
