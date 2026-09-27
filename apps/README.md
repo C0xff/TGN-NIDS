@@ -1,8 +1,9 @@
 # Thư mục `apps`
 
-Thư mục này chứa ứng dụng Streamlit của đồ án. Dashboard nhận dữ liệu NetFlow,
+Thư mục này chứa ứng dụng Streamlit của đồ án. Dashboard nhận tệp NetFlow,
 gọi mô hình đã lưu để suy luận, trình bày chỉ số và hiển thị phần giải thích cho
-các cảnh báo mạng.
+các cảnh báo mạng. Đây là công cụ minh họa và kiểm thử chức năng trong môi
+trường ngoại tuyến, chưa phải hệ thống giám sát lưu lượng trực tiếp.
 
 ## Cấu trúc thư mục
 
@@ -36,6 +37,12 @@ apps/
 | `dashboard/theme.py` | Khai báo token màu sáng/tối và sinh CSS ghi đè theo chủ đề đang chọn. |
 | `dashboard/style.css` | Định kiểu các khối giao diện Streamlit và HTML tùy biến. |
 
+Giao diện cho phép khôi phục bộ nhớ TGN từ checkpoint hoặc đặt bộ nhớ về 0
+trước mỗi lượt phân tích. Hai lựa chọn có thể cho kết quả khác nhau khi dữ liệu
+có địa chỉ mới. Đồ thị lân cận và độ quan trọng thuộc tính trong thẻ XAI được
+tính trên dữ liệu đang xem. Kết quả GNNExplainer của báo cáo được tạo ngoại
+tuyến và không phải một chức năng của dashboard.
+
 ## `static/vendor/`
 
 Các tệp trong `static/vendor/` là thư viện bên thứ ba được nhúng sẵn để phần
@@ -58,3 +65,7 @@ Kho công khai không kèm checkpoint hoặc dữ liệu mẫu. Khi thiếu các
 dashboard chỉ hoạt động ở chế độ trình diễn để kiểm tra luồng xử lý và giao
 diện. Gói Google Drive đi kèm lưu các tài sản cần thiết khi muốn chạy suy luận
 bằng trọng số đã chốt.
+
+Ba tệp demo trong gói nội bộ được lấy mẫu để kiểm tra giao diện. Trường hợp
+thiếu địa chỉ IP dùng định danh tổng hợp để phần mềm tiếp tục chạy. Các chỉ số
+từ trường hợp này không đại diện cho hiệu năng khoa học của mô hình đồ thị.

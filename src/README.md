@@ -61,7 +61,7 @@ src/
 | `data/graph_builder.py` | Ánh xạ địa chỉ IP thành đỉnh, chuyển từng luồng thành cạnh có hướng và tạo `TemporalData`. |
 | `data/labels.py` | Quy đổi các cách ghi nhãn về `0` cho Benign và `1` cho Attack; báo lỗi khi gặp nhãn lạ ở chế độ nghiêm ngặt. |
 | `data/preprocess.py` | Chọn đặc trưng số, xử lý giá trị thiếu/vô hạn, biến đổi log, chuẩn hóa và mã hóa nhãn đa lớp. |
-| `data/protocols.py` | Cài đặt các cách chia tập TE-G-SAGE, GraphIDS, Anomal-E và chia ngẫu nhiên phân tầng. |
+| `data/protocols.py` | Cài đặt cách chia theo thời gian của TE-G-SAGE, cách chia của GraphIDS và Anomal-E, cùng chia ngẫu nhiên phân tầng. Báo cáo dùng chia theo thời gian cho UNSW-v3 và chia phân tầng cho UNSW-v2, bộ CSE. |
 
 ### `models/` — các khối của mô hình
 
@@ -69,7 +69,7 @@ src/
 | --- | --- |
 | `models/__init__.py` | Công khai `EdgeFeatureDecoder` từ gói mô hình. |
 | `models/anomaly_detector.py` | Định nghĩa bộ phân loại cạnh nhận biểu diễn hai đỉnh và, khi cần, đặc trưng của chính cạnh. |
-| `models/edge_decoder.py` | Che một phần đặc trưng cạnh, tái thiết phần bị che và tính điểm bất thường từ sai số tái thiết. |
+| `models/edge_decoder.py` | Che một phần đặc trưng trên đường vào bộ giải mã, tái thiết phần bị che và tính điểm bất thường từ sai số tái thiết. Vector cạnh đầy đủ vẫn đi qua encoder trước khi áp mặt nạ. |
 | `models/embedding.py` | Tổng hợp ngữ cảnh lân cận bằng `TransformerConv`, `LayerNorm` và kết nối tắt. |
 | `models/tgn_memory.py` | Bọc `TGNMemory` để lưu trạng thái của từng đỉnh theo thời gian. |
 
@@ -78,7 +78,7 @@ src/
 | Tệp | Chức năng |
 | --- | --- |
 | `experiments/__init__.py` | Đánh dấu gói chứa các thành phần thí nghiệm. |
-| `experiments/ood_eval.py` | Nạp checkpoint an toàn và đánh giá mô hình trên dữ liệu NetFlow ngoài phân phối theo từng khối. |
+| `experiments/ood_eval.py` | Nạp checkpoint và đánh giá mô hình trên dữ liệu NetFlow ngoài phân phối theo từng khối, gồm cả bước hiệu chuẩn ngưỡng khi có nhãn tại mạng đích. |
 | `experiments/runner.py` | Khai báo cấu hình, chia dữ liệu, huấn luyện hai giai đoạn, dừng sớm, hiệu chỉnh ngưỡng và lưu đầu ra. |
 
 ### `explainers/` — giải thích dự đoán

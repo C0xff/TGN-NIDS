@@ -21,11 +21,12 @@ executed/
 | --- | --- |
 | `b-twodts-train-v2.ipynb` | Huấn luyện hai giai đoạn và đánh giá trên NF-UNSW-NB15-v2. |
 | `b-twodts-train-v3.ipynb` | Huấn luyện trên NF-UNSW-NB15-v3 và NF-CSE-CIC-IDS2018-v3. |
-| `twodts-phan-tich.ipynb` | Đánh giá ngoài phân phối trên NF-ToN-IoT-v3, phân tích độ nhạy đặc trưng và giải thích dự đoán. |
-| `b-twodts-ablation.ipynb` | So sánh bốn cấu hình cắt bỏ để đo vai trò của từng thành phần kiến trúc. |
+| `twodts-phan-tich.ipynb` | Đánh giá ngoài phân phối trên NF-ToN-IoT-v3, hiệu chuẩn bằng nhãn của một nửa tập đích, phân tích độ nhạy đặc trưng và chạy GNNExplainer. |
+| `b-twodts-ablation.ipynb` | So sánh bốn cấu hình cắt bỏ trong cùng một phiên chạy trên NF-UNSW-NB15-v3. |
 
 Các notebook được giữ nguyên mã và đầu ra của lần chạy đã dùng để tổng hợp báo
-cáo. Vì vậy, nên xem chúng như bản ghi thực nghiệm thay vì chỉnh sửa trực tiếp.
+cáo. Hãy xem chúng như bản ghi thực nghiệm. Không chạy lại hoặc chỉnh sửa trực
+tiếp vì các ô ghi kết quả có thể ghi đè đầu ra đã dùng trong báo cáo.
 
 Để thực thi đầy đủ, cần có dữ liệu, checkpoint và môi trường thí nghiệm trong
 gói Google Drive đi kèm. Các tài sản này không có trong kho GitHub công khai.
