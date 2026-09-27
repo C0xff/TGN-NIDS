@@ -23,24 +23,33 @@ Hệ thống thực hiện hai giai đoạn học trên cùng một bộ mã hó
    nhiệm vụ tái thiết đặc trưng bị che. Sai số tái thiết được dùng làm điểm bất
    thường.
 2. **Phân loại tấn công có giám sát:** đóng băng bộ mã hóa đã học và huấn luyện
-   đầu phân loại cho 10 lớp hành vi.
+   đầu phân loại cho các lớp hành vi của từng bộ dữ liệu. UNSW-v3 và UNSW-v2
+   có 10 lớp, còn bộ CSE có 15 lớp.
 
 Khối giải thích hỗ trợ phân tích độ nhạy đặc trưng và trích xuất đồ thị lân cận
-quanh endpoint cần điều tra.
+quanh endpoint cần điều tra. GNNExplainer được chạy ngoại tuyến cho một cảnh
+báo đại diện, không nằm trong dashboard.
 
 ## Kết quả chính
 
 | Nội dung đánh giá | Bộ dữ liệu | Kết quả |
 | --- | --- | ---: |
-| Phát hiện bất thường tự giám sát | NF-UNSW-NB15-v3 | F1 lớp tấn công **97,615%**, FPR **0,336%** |
+| Phát hiện bất thường tự giám sát | NF-UNSW-NB15-v3 | F1 lớp tấn công **97,615%**, FAR **0,336%** |
 | Phân loại 10 lớp | NF-UNSW-NB15-v3 | Macro F1 **55,961%** |
-| Phân loại quy về hai lớp | NF-UNSW-NB15-v3 | Recall lớp tấn công **99,955%** |
-| Đánh giá ngoài phân phối sau hiệu chuẩn ngưỡng | NF-ToN-IoT-v3 | F1 **74,073%**, ROC-AUC **82,583%** |
+| Phân loại quy về hai lớp | NF-UNSW-NB15-v3 | F1 **99,700%**, Recall lớp tấn công **99,955%** |
+| Đánh giá ngoài phân phối sau hiệu chuẩn bằng nhãn của nửa tập đích | NF-ToN-IoT-v3 | F1 **74,073%**, ROC-AUC **82,583%** |
+| Cắt bỏ định danh node (`random_nodes`) | NF-UNSW-NB15-v3 | Macro F1 giảm **2,827 điểm phần trăm** |
 
 Ở bài toán phân loại 10 lớp, mô hình cao hơn TE-G-SAGE 6,904 điểm phần trăm và
-thấp hơn XGBoost 0,821 điểm phần trăm trên cùng lát cắt kiểm thử. Điều này cho
-thấy biểu diễn đồ thị thời gian khai thác được ngữ cảnh liên lạc, nhưng chưa
-tạo ra khoảng cách rõ rệt so với mô hình bảng được tinh chỉnh tốt.
+thấp hơn XGBoost 0,821 điểm phần trăm trên cùng lát cắt kiểm thử. Thí nghiệm cắt
+bỏ cho thấy định danh node có ích chủ yếu khi gọi tên loại tấn công, trong khi
+F1 hai lớp vẫn đạt 99,903% sau khi xáo trộn định danh.
+
+UNSW-v3 có lối tắt dữ liệu mạnh: toàn bộ luồng tấn công xuất phát từ bốn địa
+chỉ nguồn và riêng `MAX_TTL` đã đạt ROC-AUC 0,9984. Cây quyết định sâu 3 không
+dùng đồ thị vẫn đạt F1 hai lớp 99,79%. Vì vậy, kết quả hai lớp không đủ để kết
+luận TGN tốt hơn mô hình dạng bảng. Báo cáo dựa thêm vào bài toán nhiều lớp,
+đánh giá ngoài phân phối và thí nghiệm cắt bỏ để phân tích vai trò của đồ thị.
 
 Điều kiện đo, kết quả theo lớp và các giới hạn thực nghiệm được trình bày trong
 [`docs/`](docs/README.md). Dữ liệu gốc, checkpoint, báo cáo Word và toàn văn
@@ -55,7 +64,12 @@ kho mã công khai.
 - mô phỏng luồng dữ liệu theo từng mini-batch;
 - theo dõi cảnh báo, điểm bất thường và hàng đợi cần xem xét;
 - so sánh chỉ số giữa các mô hình;
-- xem ego-network và độ quan trọng đặc trưng.
+- xem đồ thị lân cận và độ quan trọng đặc trưng bằng phép ablation.
+
+Dashboard xử lý tệp có sẵn và mô phỏng phát lại theo khối. Hệ thống chưa nhận
+NetFlow trực tiếp từ hạ tầng mạng và chưa tích hợp với Kafka hoặc SIEM. Các chỉ
+số trên ba tệp trình diễn chỉ kiểm tra chức năng giao diện, không phải kết quả
+đánh giá khoa học của mô hình.
 
 Kho mã công khai không kèm dữ liệu thô hoặc checkpoint. Khi không có trọng số,
 dashboard chuyển sang chế độ demo; kết quả khi đó chỉ dùng để kiểm tra luồng xử
@@ -121,7 +135,7 @@ TGN-NIDS/
 | [`src/`](src/README.md) | Mã nguồn xử lý dữ liệu, mô hình, thực nghiệm và XAI |
 | [`tests/`](tests/README.md) | Kiểm thử các điều kiện ảnh hưởng đến tính đúng của kết quả |
 
-Dữ liệu thô, checkpoint, gói phân phối, báo cáo Word, hồ sơ chính thức của
+Dữ liệu thô, checkpoint, kết quả thực nghiệm gốc, gói phân phối, báo cáo Word, hồ sơ chính thức của
 trường và toàn văn tài liệu tham khảo không nằm trong kho công khai. Chúng được
 tổ chức riêng trong gói Google Drive của đồ án.
 

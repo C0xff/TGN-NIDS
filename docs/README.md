@@ -24,7 +24,7 @@ docs/
 | Tệp | Nội dung |
 | --- | --- |
 | `SO_LIEU_DAU_RA_CHI_TIET.md` | Từng số liệu kèm điều kiện đo và nguồn đối chiếu. |
-| `KET_QUA_DO_LUONG.md` | Bảng kết quả tổng hợp và các mốc đối sánh. |
+| `KET_QUA_DO_LUONG.md` | Bảng kết quả tổng hợp, thí nghiệm cắt bỏ, các mốc công bố và phép đo bổ trợ của đồ án. |
 | `THUC_NGHIEM_CAT_BO_KIEN_TRUC.md` | Thiết kế và kết quả của các cấu hình cắt bỏ. |
 | `KIEM_CHUNG_TAI_LIEU_THAM_KHAO.md` | Cách đối chiếu số liệu dẫn lại với nguồn gốc. |
 | `CO_SO_LY_THUYET_VA_DOI_SANH.md` | Cơ sở lý thuyết và điều kiện so sánh. |
@@ -36,6 +36,9 @@ docs/
 ## Phạm vi công khai
 
 Các tài liệu này diễn giải notebook đã thực thi và đầu ra thực nghiệm đã chốt.
+`KET_QUA_DO_LUONG.md` được dựng từ kết quả JSON, bảng cắt bỏ và phép đo bổ trợ
+đã lưu. Số liệu của công trình khác được chép theo tài liệu tham khảo đã kiểm
+chứng và được ghi nguồn riêng.
 Dữ liệu, checkpoint, toàn văn nguồn tham khảo, gói chuyển giao và báo cáo Word
 được lưu trong Google Drive, không có trong kho GitHub.
 
