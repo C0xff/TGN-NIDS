@@ -1,8 +1,8 @@
 # Cơ sở lý thuyết và ma trận đối sánh
 
-Đây là nguồn cho **Chương 2** của báo cáo: bối cảnh khoa học, bốn công trình đối
-sánh, đặc tả trường dữ liệu NetFlow và hệ thống chỉ số. Mọi chỉ số của công trình
-khác trong tệp này đã đối chiếu với bản PDF gốc trong `references/`.
+Đây là nguồn cho **Chương 2** của báo cáo: bối cảnh khoa học, ba công trình đối
+sánh, công trình bị loại khỏi phạm vi, đặc tả NetFlow và hệ thống chỉ số. Chỉ
+những số liệu đã kiểm tra trong bản toàn văn mới được đưa vào báo cáo.
 
 Số liệu đo được của đồ án không nằm ở đây. Chúng nằm ở
 `docs/SO_LIEU_DAU_RA_CHI_TIET.md`, sinh trực tiếp từ `models/saved`.
@@ -62,11 +62,11 @@ phản ứng. Vì vậy đồ án bắt buộc tích hợp kỹ thuật trí tu�
 
 ---
 
-## 2. Bốn công trình đối sánh
+## 2. Ba công trình đối sánh và một công trình bị loại
 
-Bốn công trình mà đồ án đối sánh trực tiếp, theo ba nhóm luận điểm: học tự giám
-sát trên đồ thị, học đối nghịch theo thời gian, và trí tuệ nhân tạo giải thích
-được.
+Đồ án đối sánh trực tiếp với Anomal-E, GraphIDS và TE-G-SAGE. TCG-IDS có trong
+đề cương ban đầu nhưng bị loại khỏi báo cáo định lượng vì không có bản toàn văn
+để kiểm chứng điều kiện đo.
 
 Các kiến trúc đồ thị đời đầu học biểu diễn cho **đỉnh**, trong khi bản chất tấn
 công mạng nằm ở **hành vi giao tiếp**, tức ở cạnh. Hướng học **hướng cạnh** ra
@@ -109,10 +109,11 @@ thiết cao bất thường bị coi là tấn công.
 Trên NF-UNSW-NB15-v3: **PR-AUC 99,98%, Macro F1 99,61%**, vượt các đường cơ sở từ
 5 tới 25 điểm phần trăm.
 
-**Giao thức của họ trùng giao thức đồ án**, mục 4.2 bài gốc: chia 80/10/10 phân
-tầng theo loại tấn công, tập huấn luyện chỉ chứa benign, ngưỡng chọn bằng cực đại
-Macro F1 trên tập kiểm định. Khác biệt duy nhất là chuẩn hoá Min-Max thay vì
-z-score.
+GraphIDS chia 80/10/10 phân tầng theo loại tấn công, tập huấn luyện chỉ chứa
+Benign và chọn ngưỡng bằng cực đại Macro F1 trên tập kiểm định. Đồ án dựng lại
+giao thức này trên UNSW-v2. Trên UNSW-v3, đồ án dùng lát cắt theo thời gian nên
+hai kết quả không cùng giao thức. Hai phương pháp còn khác ở cách chuẩn hóa và
+kiến trúc encoder.
 
 ### 2.3. TCG-IDS, học đối nghịch theo thời gian
 
@@ -209,8 +210,8 @@ trên 94% mà hoàn toàn vô dụng. Vì vậy đồ án dùng tám chỉ số 
   Phải giữ cực thấp để tránh hiện tượng người trực mệt mỏi vì cảnh báo.
 - **PR-AUC** không phụ thuộc ngưỡng và không bị số lượng âm tính đúng chi phối
   như ROC-AUC, nên khách quan hơn trên dữ liệu mất cân bằng.
-- **Độ trễ suy luận và thông lượng**, để chứng minh quy trình phần mềm thuần tuý
-  đủ sức phân tích thời gian thực.
+- **Độ trễ suy luận và thông lượng**, để mô tả chi phí của suy luận theo lô.
+  Phép đo này không đủ để kết luận hệ thống vận hành thời gian thực.
 - **Mốc của bộ phân loại tầm thường**, `2·rate/(1+rate)`. Không có mốc này thì
   một F1 cao vẫn có thể nằm dưới mức đoán bừa.
 
@@ -220,13 +221,14 @@ trên 94% mà hoàn toàn vô dụng. Vì vậy đồ án dùng tám chỉ số 
 hiện của TE-G-SAGE: Macro F1 của họ rơi xuống 49,057% khi buộc phải tôn trọng
 trình tự thời gian. Mô hình của đồ án chịu cùng ràng buộc trên NF-UNSW-NB15-v3.
 
-**Trục hai, tốc độ vận hành.** TCG-IDS đặt mốc 0,51 giây cho mỗi 100 mẫu. Vì mục
-tiêu của đồ án là quy trình phần mềm thuần tuý không phụ thuộc thiết bị mạng
-chuyên dụng, độ trễ là chỉ số phải ghi nhận liên tục.
+**Trục hai, tốc độ vận hành.** Đồ án báo độ trễ và thông lượng của chính mô hình
+trên Tesla T4. Không đối sánh tốc độ với TCG-IDS vì không có toàn văn để xác
+nhận phần cứng, cách đo và điều kiện chạy.
 
-**Trục ba, chất lượng giải thích.** TE-G-SAGE dùng SHAP trên subgraph tính
-toán; đồ án dùng trích xuất subgraph ego-network. Đánh giá qua khả năng thu hẹp
-đúng vùng ảnh hưởng k hop và cô lập được nguồn phát tán.
+**Trục ba, chất lượng giải thích.** TE-G-SAGE dùng SHAP trên subgraph tính toán.
+Đồ án kết hợp độ nhạy thuộc tính, GNNExplainer chạy ngoại tuyến và đồ thị lân
+cận trên giao diện. Phần này trình bày cơ chế và ví dụ, chưa có chỉ số chung để
+xếp hạng chất lượng giải thích giữa hai hệ thống.
 
 ---
 
@@ -251,14 +253,15 @@ lớp tấn công**. Macro F1 cho lớp lành tính một phiếu ngang lớp t�
 lành tính vừa đông vừa dễ, nên nó có thể cao trong khi hệ thống bỏ sót phần lớn
 tấn công.
 
-**Bảng một, nhị phân.** Đặt mốc tra bảng chỉ dùng địa chỉ nguồn lên hàng đầu.
-Kết luận đi kèm: bảng này không xếp hạng được phương pháp, vì mọi hệ thống kể cả
-hai công trình đã công bố đều nằm dưới mốc đó. Giữ bảng vì Anomal-E chỉ công bố
-số nhị phân; bỏ nó là mất đối sánh với một trong bốn công trình của đề cương.
+**Bảng một, nhị phân.** Đặt kết quả giai đoạn một cạnh GraphIDS và Anomal-E,
+kèm đúng giao thức của từng hàng. Phần thảo luận bổ sung mốc tầm thường và các
+baseline dạng bảng để tránh đọc F1 cao như bằng chứng riêng cho lợi thế của đồ
+thị.
 
-**Bảng hai, đa lớp.** Đây mới là nơi so sánh phương pháp. Bảng hiện có hàng của
-TE-G-SAGE lấy từ Bảng 7 bài gốc, hàng của đồ án, và ba mốc lối tắt tự đo. Điều
-kiện đo ghi kèm từng hàng: TE-G-SAGE chia 60/30/10, đồ án chia 80/10/10.
+**Bảng hai, đa lớp.** Bảng dùng số của GCN, TE-G-SAGE và XGBoost từ Bảng 7 của
+bài TE-G-SAGE, đặt cạnh kết quả giai đoạn hai của đồ án. Ba mô hình công bố dùng
+lát cắt 60/30/10, còn kết quả chính của đồ án dùng 80/10/10. Báo cáo ghi rõ
+khác biệt này thay vì xem các hàng là một phép xếp hạng tuyệt đối.
 
 Phần chỉ số trích từ PDF gốc của ba công trình đối sánh nằm ở mục 2 của chính
 tệp này, và đã đối chiếu bản gốc trong `references/`.

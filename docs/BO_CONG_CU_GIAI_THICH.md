@@ -72,18 +72,17 @@ của khối nhúng.
 
 ---
 
-## 3. Từng cạnh lân cận riêng lẻ không quan trọng
+## 3. Mặt nạ không làm cảnh báo biến mất
 
-Nguồn: cùng tệp trọng số cạnh ở mục 2.1. Bỏ 411 trên 600 cạnh thì xác suất tấn
-công chỉ rơi từ **99,989%** xuống **98,647%**.
+Nguồn: cùng tệp trọng số cạnh ở mục 2.1. Trong 600 cạnh, 411 cạnh có trọng số
+không vượt 0,5. Chúng không bị xoá khỏi đồ thị. GNNExplainer áp mặt nạ mềm lên
+tất cả các cạnh, rồi xác suất tấn công của cảnh báo giảm từ **99,989%** xuống
+**98,647%**.
 
-Phép tổng hợp lân cận vì vậy **bền với việc mất từng cạnh**: mỗi đỉnh có hàng
-trăm lân cận nên bỏ bớt một phần không đổi giá trị tổng hợp.
-
-Số đo này **không** nói gì về việc phép tổng hợp lân cận đóng góp bao nhiêu cho
-toàn mô hình. Đó là câu hỏi của phép cắt bỏ kiến trúc, trả lời ở
-`docs/THUC_NGHIEM_CAT_BO_KIEN_TRUC.md`, và câu trả lời đó kèm giới hạn phát hiện
-vì nó đo trên một hạt giống.
+Một cảnh báo không đủ để suy ra độ bền chung của phép tổng hợp lân cận, cũng
+không định lượng được đóng góp của đồ thị cho toàn mô hình. Câu hỏi đó được đo
+riêng bằng thí nghiệm cắt bỏ kiến trúc tại
+`docs/THUC_NGHIEM_CAT_BO_KIEN_TRUC.md`; phép đo này chỉ có một hạt giống.
 
 ---
 
@@ -101,14 +100,13 @@ ra rõ.
 ## 5. Ba hạn chế phải nêu khi trình bày kết quả giải thích
 
 **Kết quả của `GNNExplainer` phụ thuộc hạt giống.** Mặt nạ khởi tạo ngẫu nhiên
-rồi mới tối ưu. Notebook cố định `GNNEXPLAINER_SEED = 7` để hai lần chạy cho
-cùng một hình, và con số đó phải ghi trong báo cáo.
+rồi mới tối ưu. Notebook cố định `GNNEXPLAINER_SEED = 7` để tái hiện cùng phép
+đo.
 
-**Bảng độ quan trọng đặc trưng của `GNNExplainer` phẳng hơn của `TGNExplainer`.**
-Khi mô hình đã rất chắc chắn, xác suất bão hoà quanh 1 nên đạo hàm qua mặt nạ
-đặc trưng rất nhỏ. Vì vậy câu hỏi về đặc trưng dùng `TGNExplainer`, câu hỏi về
-cạnh dùng `GNNExplainer`.
+**Đây chỉ là một ví dụ cục bộ.** Báo cáo chọn cảnh báo có xác suất tấn công cao
+nhất trong mẫu ngẫu nhiên 600 luồng với hạt giống 42. Hình thu được không đại
+diện cho mọi cảnh báo hoặc mọi kiểu tấn công.
 
-**Một cạnh có trọng số cao không phải nguyên nhân duy nhất.** Theo mục 3, che một
-phần lớn cạnh lân cận gần như không đổi dự đoán, tức cấu trúc lân cận quan trọng
-về tổng thể nhưng phân tán đều trên nhiều cạnh.
+**Một cạnh có trọng số cao không phải nguyên nhân duy nhất.** Mặt nạ thể hiện
+phần đồ thị giúp giữ lại dự đoán của mô hình trong phép tối ưu này. Nó không tự
+nó chứng minh quan hệ nhân quả.

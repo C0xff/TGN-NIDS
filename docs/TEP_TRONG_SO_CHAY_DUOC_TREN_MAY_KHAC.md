@@ -131,8 +131,10 @@ Chạy được ở đó nghĩa là chạy được trên máy người chấm.
 
 ## 5. Hai hệ quả cần biết
 
-**Checkpoint phải do bản mã hiện tại sinh ra.** Tệp nào chứa đối tượng đã pickle
-thì mã hiện tại từ chối, kèm thông báo nói rõ cách xử lý là chạy lại notebook.
+**Checkpoint phải phù hợp với định dạng dữ liệu hiện tại.** Tệp chứa đối tượng
+đã pickle bị mã hiện tại từ chối. Không chạy lại notebook đã công bố hoặc ghi đè
+checkpoint để xử lý trường hợp này. Giữ nguyên tệp gốc; một phép chuyển đổi hay
+kiểm tra tương thích chỉ nên thực hiện trong quy trình độc lập.
 
 **Nguyên tắc rút ra, dùng được ở chỗ khác:** thứ cần lưu lâu dài nên lưu ở dạng
 dữ liệu, không ở dạng đối tượng của một lớp cụ thể. Đối tượng ràng tệp vào phiên
