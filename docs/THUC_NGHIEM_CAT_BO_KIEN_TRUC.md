@@ -1,9 +1,9 @@
-# THỰC NGHIỆM CẮT BỎ KIẾN TRÚC: CÁCH ĐÃ CHẠY VÀ RÀNG BUỘC KHI CHẠY LẠI
+# THỰC NGHIỆM CẮT BỎ KIẾN TRÚC: CẤU HÌNH ĐÃ CHẠY VÀ GIỚI HẠN DIỄN GIẢI
 
 Bốn cấu hình đã chạy trên NF-UNSW-NB15-v3. Kết quả nằm ở
 `models/saved/twoDTS_ablation/`; bảng đầy đủ kèm điều kiện đo ở
 `docs/SO_LIEU_DAU_RA_CHI_TIET.md`. Tệp này ghi **cách làm** và **những ràng buộc
-phải giữ** nếu chạy lại hoặc mở rộng, không lặp lại con số.
+đã áp dụng khi thực hiện, không lặp lại con số và không phải hướng dẫn chạy lại.
 
 Thí nghiệm này **có trong báo cáo**, với đúng bốn cấu hình đã chạy. Phần mở rộng
 sang nhiều hạt giống thì không: nó thuộc Hướng phát triển, ghi ở mục 6. Vì vậy
@@ -31,7 +31,7 @@ của notebook phân tích.
 
 | Cấu hình | Thành phần bị vô hiệu hoá | Cách làm |
 |---|---|---|
-| `baseline` | không | mốc đối chiếu, chạy lại trong cùng phiên |
+| `baseline` | không | mốc đối chiếu trong cùng phiên thực thi |
 | `random_nodes` | danh tính đỉnh | cờ `ablate_node_identity` của `runner.py`, gán lại ngẫu nhiên đỉnh nguồn và đích theo hạt giống |
 | `no_iat` | tám cột đặc trưng thời gian IAT | cờ `ablate_features` của `runner.py`, loại tám cột khỏi bảng dữ liệu |
 | `no_propagation` | phép tổng hợp từ đỉnh lân cận | đặt `num_layers = 0` cho `TemporalEmbeddingModule`, giữ nguyên vector nhớ |
@@ -42,34 +42,27 @@ thẳng ra ngoài. Notebook có ô tiền kiểm dựng một `TemporalEmbedding
 khẳng định `len(gat_layers) == 0` và đầu ra vẫn đúng hình dạng, trước khi chạy
 thật.
 
-Mốc đối chiếu **phải chạy lại trong cùng phiên**, không lấy lại số của lần chạy
-trước, nếu không thì chênh lệch đọc được lẫn cả sai khác môi trường.
+Mốc đối chiếu được chạy trong cùng phiên với ba cấu hình còn lại, nên chênh lệch
+trong bảng không ghép từ các phiên có môi trường khác nhau.
 
 ---
 
-## 3. Ràng buộc bắt buộc: không được làm hỏng kết quả đang có
+## 3. Bảo toàn kết quả đã chốt
 
-**Thứ nhất, không sửa `runner.py` khi chưa hỏi.** Hai cờ `ablate_features` và
-`ablate_node_identity` đã đủ cho hai cấu hình, và cấu hình thứ ba dùng tham số
-sẵn có. Nếu một cấu hình mới cần thêm cờ, hoặc cần đổi hành vi của cờ cũ, thì
-phải **dừng lại và hỏi trước**: `runner.py` nằm trong phạm vi khoá và là tệp đã
-sinh ra toàn bộ kết quả hiện hành.
+`runner.py` nằm trong phạm vi khoá và đã sinh ra toàn bộ kết quả hiện hành. Hai
+cờ `ablate_features`, `ablate_node_identity` cùng tham số `num_layers` là các
+thiết lập đã dùng cho bốn cấu hình trong báo cáo.
 
-**Thứ hai, mọi sửa đổi trong `runner.py` phải giữ nguyên đường chạy khi không bật
-ablation.** Sáu cấu hình huấn luyện gốc đều đi theo đường mặc định. Một thay đổi
-làm đổi đường đó khiến chúng không còn dựng lại được, tức hỏng khả năng tái lập
-của cả đồ án. Phép kiểm sau khi sửa: chạy lại một cấu hình cũ với cùng hạt giống
-rồi so chỉ số với tệp kết quả đang lưu.
+Không chạy lại thí nghiệm đã công bố và không ghi đè kết quả đã lưu. Nếu sau này
+có một nghiên cứu mở rộng, nó cần dùng một quy trình độc lập và một cây kết quả
+mới; số đo mới không được trộn với bốn cấu hình của báo cáo.
 
-**Thứ ba, không ghi vào thư mục kết quả cũ.** Lần chạy ablation ghi vào cây riêng
-`models/saved/twoDTS_ablation/`, không chạm `twoDTS_train_v2`, `twoDTS_train_v3`
-hay `twoDTS_phan_tich`. Sau khi chạy, đối chiếu lại kết quả
-phải báo các cấu hình cũ còn nguyên vẹn; tệp mới hiện ra dưới dạng `THÊM` và chỉ
-chốt vào bản kê khi đã duyệt.
+Kết quả của phép cắt bỏ được giữ riêng tại `models/saved/twoDTS_ablation/`, tách
+khỏi `twoDTS_train_v2`, `twoDTS_train_v3` và `twoDTS_phan_tich`.
 
 ---
 
-## 4. Ba phép tự kiểm phải chạy trước khi trích số
+## 4. Ba điểm đã kiểm khi trích số
 
 **Trường `ablation` phải khớp cấu hình đã đặt.** Đọc lại trường đó trong từng tệp
 kết quả; cấu hình ablation nào mà trường vẫn rỗng thì lần chạy đó đã không bật
@@ -118,8 +111,8 @@ cho 12,5% một phía.
 hơn biên độ dao động. Nên cùng với kết luận phải ghi biên độ dao động quan sát
 được giữa các hạt giống, để người đọc biết phép đo này phát hiện được tới mức nào.
 
-**Ràng buộc.** Lần chạy mới phải ghi vào một cây kết quả riêng, không ghi vào
-`models/saved/twoDTS_ablation/`, theo đúng mục 3 tệp này.
+Một phép đo mở rộng cần lưu kết quả vào cây riêng và tách khỏi
+`models/saved/twoDTS_ablation/`.
 
 ---
 

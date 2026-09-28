@@ -1,12 +1,7 @@
 # SỐ LIỆU ĐẦU RA CỦA MÔ HÌNH: MÔ TẢ ĐẦY ĐỦ TỪNG CHỈ SỐ
 
-**Tệp này sinh tự động. Đừng sửa tay.** Dựng lại bằng:
-
-```
-python scripts/analysis/sinh_so_lieu_dau_ra.py
-```
-
-Script đọc đúng những tệp sau và không đọc gì khác:
+Tệp này tổng hợp các số liệu đã chốt cùng điều kiện đo. Phần kết quả chính được
+dựng từ các tệp sau:
 
 - `models/saved/twoDTS_train_v2/07_giai_doan_mot/models/result_stage1_nf_unsw_nb15_v2.json`
 - `models/saved/twoDTS_train_v2/08_giai_doan_hai/models/result_stage2_nf_unsw_nb15_v2.json`
@@ -21,10 +16,11 @@ Script đọc đúng những tệp sau và không đọc gì khác:
 - `models/saved/twoDTS_phan_tich/tables/08_trong_so_canh_gnnexplainer/trong_so_canh_giai_thich.csv`
 - `models/saved/twoDTS_ablation/08_tong_hop/tables/ablation_summary.csv`
 - `models/saved/twoDTS_demo/metrics/do_tap_demo.json`
+- `models/supplementary/supplementary_measurements.json`
 
-Kiểm tính chính xác bằng cách chạy lại script rồi so tệp sinh ra với tệp đang
-có; hai bản phải giống từng byte. Mọi con số đều là giá trị đọc thẳng từ tệp
-nguồn, hoặc là phép chia và phép trừ trên các giá trị đó; không con số nào gõ tay.
+Không chạy lại notebook hoặc script thực nghiệm để kiểm tra tài liệu. Đối chiếu
+trực tiếp notebook đã thực thi với tệp nguồn tương ứng. Các phép đo bổ trợ được
+ghi riêng vì không sinh ra từ notebook huấn luyện TGN.
 
 Mục đích: mỗi con số đi kèm **đủ điều kiện đo**, để không ai, người hay công cụ,
 trích nó sang một bối cảnh khác.
@@ -413,7 +409,7 @@ chuyển miền, **không** so sánh được với chỉ số trên tập kiể
 | `stage2_nf_unsw_nb15_v2` | 38,982% | 56,097% | 0,880% | 56,097% | 100,000% | 62,587% | 47,940% | **không** |
 | `stage2_nf_unsw_nb15_v3` | 38,982% | 56,097% | 41,791% | 74,073% | 82,390% | 82,583% | 67,886% | có |
 
-Cột **F1 ngưỡng mặc định** là F1 khi áp thẳng ngưỡng đã hiệu chuẩn trên bộ gốc;
+Cột **F1 ngưỡng mặc định** là F1 khi dùng ngưỡng cố định 0,5;
 cột **F1 sau hiệu chuẩn** là F1 khi chọn lại ngưỡng trên nửa A của bộ đích rồi
 chấm trên nửa B. Hai cột này **không được trộn**: cột thứ hai cần nhãn của bộ
 đích, tức một điều kiện mà tình huống triển khai thật không có.
@@ -510,10 +506,35 @@ Cột cuối là phép tự kiểm: vòng tốt nhất nằm sát cuối ngân s
 vẫn đang tiến bộ khi bị cắt, và con số của nó không đọc được như con số của một
 mô hình đã hội tụ. Cả bốn cấu hình đều không rơi vào trường hợp đó.
 
+## Phép đo bổ trợ trên NF-UNSW-NB15-v3
+
+**Nguồn:** `models/supplementary/supplementary_measurements.json`
+
+Phép đo lối tắt dùng toàn bộ 2.365.424 luồng, không chia tập và không huấn
+luyện. Toàn bộ luồng tấn công xuất phát từ bốn địa chỉ nguồn
+`175.45.176.0/30`, 36 địa chỉ nguồn chỉ sinh lưu lượng Benign và không địa chỉ
+nguồn nào sinh cả hai loại. `MAX_TTL` phổ biến nhất là 32 ở lớp Benign và 255 ở
+lớp tấn công. Dùng riêng giá trị thô của `MAX_TTL` làm điểm tấn công đạt ROC-AUC
+0,9984.
+
+Ba baseline dạng bảng dùng phép chia theo thời gian 60/30/10 của TE-G-SAGE trên
+UNSW-v3. Tập train có 1.419.254 luồng, tập test có 236.542 luồng. Bộ tiền xử lý
+chỉ khớp trên tập train. Địa chỉ IP và mốc thời gian không đi vào thuộc tính.
+
+| Mô hình | Thuộc tính | F1 lớp tấn công | FAR | PR-AUC |
+|---|---|---:|---:|---:|
+| Decision Tree, `max_depth=3` | Đủ 49 thuộc tính | 99,794% | 0,0333% | 99,797% |
+| Decision Tree, `max_depth=3` | Bỏ `MIN_TTL`, `MAX_TTL` | 99,551% | 0,0661% | 99,137% |
+| Logistic Regression | Đủ 49 thuộc tính | 99,566% | 0,0180% | 99,769% |
+
+Các baseline này đo bài toán hai lớp và không dùng đồ thị. Chúng cho thấy kết
+quả hai lớp trên UNSW-v3 bị ảnh hưởng mạnh bởi lối tắt dữ liệu, không dùng để
+đại diện cho hiệu năng phân loại mười lớp.
+
 ## Phép đo chức năng trên ba tệp demo
 
-**Nguồn:** `models/saved/twoDTS_demo/metrics/do_tap_demo.json`, dựng lại bằng
-`python scripts/analysis/do_tap_demo.py`.
+**Nguồn:** `models/saved/twoDTS_demo/metrics/do_tap_demo.json`. Số liệu được
+lưu từ phép thử chức năng đã thực hiện.
 
 Đây là **phép thử chức năng của giao diện**, không phải kết quả đánh giá mô
 hình, và không được dùng để kết luận mô hình tốt hay kém.

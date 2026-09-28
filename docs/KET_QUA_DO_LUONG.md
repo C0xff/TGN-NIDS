@@ -1,9 +1,9 @@
 # Kết quả đo lường
 
-**Tài liệu này được sinh tự động** bởi `scripts/analysis/tong_hop_ket_qua.py`,
-đọc thẳng từ các tệp `result_*.json` của lần chạy thật. Không chép tay con
-số nào, nên tài liệu luôn khớp dữ liệu gốc. Chạy lại script sau mỗi
-notebook để cập nhật.
+Phần kết quả của đồ án trong tài liệu này được dựng bởi
+`scripts/analysis/tong_hop_ket_qua.py` từ các tệp đầu ra đã chốt. Không chạy lại
+notebook hoặc script thực nghiệm để cập nhật tài liệu. Khi cần kiểm tra một giá
+trị, đối chiếu với notebook đã thực thi và tệp nguồn được ghi tại từng mục.
 
 Các phép đo không sinh ra từ notebook nằm ở cuối, trong mục *Các phép đo
 bổ trợ*. Mục đó cũng sinh tự động, đọc từ `models/supplementary/supplementary_measurements.json`

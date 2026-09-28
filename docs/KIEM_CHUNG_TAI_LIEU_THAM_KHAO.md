@@ -67,9 +67,9 @@ Dải siêu tham số ghi trong bài:
 
 Cấu hình hiện hành dùng learning rate `1 × 10⁻⁴`, nằm đúng ở giới hạn trên của
 dải công bố, và tỷ lệ che 0,15 trùng khớp. Ngân sách vòng lặp là 150 cho giai
-đoạn một và 100 cho giai đoạn hai; vòng tốt nhất của cả sáu cấu hình đều nằm
-trong ngân sách, cao nhất là 58 trên 100, nên không lần nào bị cắt khi còn đang
-tiến bộ.
+đoạn một và 100 cho giai đoạn hai. Sáu lần huấn luyện chính đều dừng trước giới
+hạn, cao nhất là epoch 58 ở giai đoạn hai. Bốn cấu hình ablation được kiểm riêng
+và cũng không có vòng tốt nhất nằm sát cuối ngân sách.
 
 Hạn chế do chính tác giả nêu:
 
@@ -117,9 +117,11 @@ routers of flow context and **avoids leaking host labels into the encoder**".
 đỉnh" của đồ án — đó không phải một phép thử tuỳ hứng mà là tái hiện một quyết
 định thiết kế có chủ đích của TE-G-SAGE.
 
-Thí nghiệm tương ứng: `tegsage_binary_v3` và `tegsage_multiclass_v3` đã sửa
-sang độ sâu 2 cho đúng bài gốc; `proposed_multiclass_depth2_v3` kiểm luận điểm
-multi-hop trên kiến trúc của đồ án.
+Đồ án không cài đặt lại TE-G-SAGE. Số liệu GCN, TE-G-SAGE và XGBoost trong báo
+cáo được trích từ Bảng 7 của bài gốc. Vai trò của cấu trúc đồ thị trong mô hình
+đề xuất được kiểm tra bằng bốn cấu hình ablation trên UNSW-v3, không dùng các
+tên chạy `tegsage_binary_v3`, `tegsage_multiclass_v3` hoặc
+`proposed_multiclass_depth2_v3`.
 
 ## 4. Xác nhận độc lập cho trích dẫn TCG-IDS
 

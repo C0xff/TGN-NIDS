@@ -4,8 +4,8 @@ Tệp này quy định cách sinh các tệp trong `data/samples/`, giải thíc
 mỗi đặc điểm của chúng được chọn, và phân tích điều gì xảy ra khi một bộ dữ liệu
 thu thập thật ngoài đời **không** có những đặc điểm đó.
 
-Bộ sinh nằm ở `scripts/pipeline/build_demo_samples.py`. Mọi tham số nêu trong tệp này đều
-đủ để dựng lại ba tệp demo từ dữ liệu thô mà không cần đọc mã.
+Bộ sinh nằm ở `scripts/pipeline/build_demo_samples.py`. Tệp này ghi lại các
+tham số đã dùng và mục đích của từng tệp demo.
 
 ---
 
@@ -29,7 +29,7 @@ Ba câu hỏi này quyết định vì sao có ba tệp demo chứ không phải
 
 ---
 
-## 2. Bốn ràng buộc bắt buộc, và lý do của từng ràng buộc
+## 2. Bốn điều kiện cần kiểm tra và phạm vi áp dụng
 
 ### 2.1. Không được chứa dữ liệu đã dùng để huấn luyện
 
@@ -52,9 +52,11 @@ bộ đó thì phần trình diễn và phần đo lường không còn độc l
 phân biệt được đâu là minh hoạ và đâu là bằng chứng, còn nhóm thực hiện thì mất
 khả năng dùng bộ ấy làm phép thử độc lập về sau.
 
-### 2.3. Mọi địa chỉ phải có ô nhớ riêng trong bảng memory đã học
+### 2.3. Tệp cùng phân phối phải giữ đúng ánh xạ bộ nhớ
 
-Đây là ràng buộc riêng của kiến trúc TGN và là ràng buộc dễ bỏ sót nhất.
+Điều kiện này bắt buộc với `demo_1`, nơi chỉ số được đặt cạnh kết quả trên mạng
+nguồn. `demo_2` và `demo_3` cố ý vi phạm điều kiện để kiểm tra cách giao diện xử
+lý địa chỉ mới hoặc thiếu địa chỉ. Chỉ số của hai tệp này là phép thử chức năng.
 
 Mô hình cấp cho mỗi máy chủ một vector nhớ, cập nhật mỗi khi có luồng của máy đó
 đi qua. Bảng nhớ có kích thước cố định từ lúc huấn luyện, ở đây là 44 ô. Một địa
@@ -73,10 +75,9 @@ tệp demo hiện hành, số liệu từ
 | `demo_3_thieu_cot_dia_chi` | 43 | không có cột địa chỉ | — |
 
 Bảng nhớ có 44 ô và cả 44 ô đều đã có chủ từ checkpoint. Trên `demo_2`, toàn bộ
-2.426 địa chỉ đều là địa chỉ lạ nên bị băm vào 44 ô đó, tức bộ nhớ theo đỉnh mất
-sạch tác dụng. Mà bộ nhớ theo đỉnh chính là điểm phân biệt TGN với một mạng đồ
-thị tĩnh thông thường, nên trên tệp đó phần demo không minh hoạ được đúng thứ đồ
-án muốn trình bày.
+2.426 địa chỉ đều là địa chỉ lạ nên bị băm vào 44 ô đó. Trạng thái của mạng
+nguồn có thể gây nhiễu cho dữ liệu mới, vì vậy tệp này chỉ minh họa giới hạn của
+cách ánh xạ bộ nhớ cố định.
 
 ### 2.4. Phải giữ đủ các lớp tấn công và giữ nguyên tỷ lệ lớp
 
@@ -126,8 +127,10 @@ thái bộ nhớ lúc bắt đầu. Mục 3.4 đo cụ thể mức phụ thuộc
 | Phát hiện tấn công | 100,000% | 99,955% |
 | Tỷ lệ báo động giả | 0,066% | 0,052% |
 
-Ba cặp số khớp nhau trong sai số lấy mẫu, nên người xem đối chiếu màn hình với
-báo cáo là thấy trùng.
+Ba cặp số gần nhau nhưng không phải cùng một phép đo. Kết quả huấn luyện dùng
+toàn bộ tập kiểm thử theo giao thức của runner, còn demo chỉ dùng mẫu 10.000
+luồng và khởi tạo bộ nhớ từ checkpoint. Báo cáo vì vậy trình bày demo như phép
+thử chức năng riêng.
 
 Lưu ý khi đọc: các con số trên là **nhị phân quy đổi**, tức chỉ phân biệt có tấn
 công hay không. Chỉ số đa lớp của cùng mô hình thấp hơn nhiều, độ chính xác
@@ -157,9 +160,9 @@ checkpoint: độ chính xác 74,560%, phát hiện tấn công 5,800%, báo đ�
 Tệp này trả lời câu hỏi thứ ba. Nó cho thấy một điều quan trọng mà bảng chỉ số
 không nói được: mô hình **không sụp thành báo bừa**, mà sụp theo hướng bỏ sót.
 Nó vẫn giữ được tỷ lệ báo động giả ở mức hai chữ số, nhưng gần như không còn
-nhận ra tấn công nào. Đó là hành vi cần giải thích trong báo cáo, và nó bắt
-nguồn từ đúng hai nguyên nhân: phân bố đặc trưng khác, và toàn bộ 2.426 địa chỉ
-đều không có ô nhớ riêng.
+nhận ra tấn công nào. Dữ liệu khác phân phối và toàn bộ 2.426 địa chỉ không có ô
+nhớ riêng đều có thể góp phần vào suy giảm. Phép thử này không tách riêng được
+mức ảnh hưởng của từng nguyên nhân.
 
 ### 3.3. `demo_3_thieu_cot_dia_chi.csv`
 
@@ -239,10 +242,10 @@ giống vậy. Bốn tình huống dưới đây xếp theo mức độ ảnh h�
 **Xảy ra khi nào.** Bộ thu thập chỉ xuất thống kê mức luồng; hoặc địa chỉ bị gỡ
 vì lý do riêng tư trước khi dữ liệu rời khỏi tổ chức.
 
-**Mô hình bị gì.** Không dựng được đồ thị máy chủ. Toàn bộ phần đóng góp của
-kiến trúc đồ thị biến mất, mô hình tụt về mức của một bộ phân loại chỉ dùng đặc
-trưng luồng. Đo được trên `demo_3`: báo động giả nhảy lên 32,623%, tức cứ ba
-luồng lành tính thì gần một luồng bị báo nhầm.
+**Mô hình bị gì.** Không dựng được đồ thị máy chủ quan sát được. Giao diện sinh
+định danh tổng hợp để tiếp tục suy luận, nên topology khi đó không đại diện cho
+mạng thật. Trên `demo_3`, FAR là 32,623% khi khôi phục checkpoint. Con số này
+chỉ cho biết phần mềm chạy được với dữ liệu khuyết.
 
 **Làm gì.** Không thay bằng định danh tổng hợp rồi báo cáo chỉ số như thường.
 Định danh đỉnh quyết định toàn bộ cấu trúc đồ thị nên nó tham gia vào mọi chỉ
@@ -291,10 +294,9 @@ lượng cột: thiếu tám cột ít quan trọng khác hẳn thiếu hai cộ
 **Xảy ra khi nào.** Đây là tình huống mặc định của dữ liệu thật. Không ai gán
 nhãn tấn công cho lưu lượng đang chảy.
 
-**Mô hình bị gì.** Bản thân việc phát hiện vẫn chạy, vì giai đoạn một là học tự
-giám sát và chỉ cần lưu lượng lành tính để huấn luyện. Cái mất là **khả năng đo
-chất lượng**: không có nhãn thì không tính được độ chính xác, phát hiện tấn
-công, hay tỷ lệ báo động giả.
+**Mô hình bị gì.** Suy luận vẫn chạy bằng checkpoint đã nạp. Cái mất là **khả
+năng đo chất lượng**: không có nhãn thì không tính được Accuracy, Recall tấn
+công hoặc FAR.
 
 **Làm gì.** Không hiển thị các chỉ số đó dưới dạng số. Đây chính là lý do phần
 suy luận trả về giá trị rỗng kèm lý do thay vì một con số mặc định trông như
