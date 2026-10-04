@@ -17,7 +17,7 @@ cáo.
 Phần này trích nguyên văn từ bản toàn văn của ba công trình. Mỗi mục dưới đây
 dùng làm căn cứ cho một cấu hình thí nghiệm cụ thể trong `notebooks/`.
 
-## 1. Anomal-E — hướng phát triển do chính tác giả nêu
+## 1. Anomal-E, hướng phát triển do chính tác giả nêu
 
 Nguyên văn câu cuối phần kết luận:
 
@@ -46,7 +46,7 @@ của biến thể Anomal-E kết hợp Isolation Forest ở **mức nhiễm b�
 của bài gốc). Cùng biến thể ở mức nhiễm bẩn 0% (Bảng 7) chỉ đạt **85,62%**.
 Trích con số mà bỏ tham số nhiễm bẩn là trình bày thiếu điều kiện.
 
-## 2. GraphIDS — dải siêu tham số công bố và hạn chế tác giả tự nêu
+## 2. GraphIDS, dải siêu tham số công bố và hạn chế tác giả tự nêu
 
 Dải siêu tham số ghi trong bài:
 
@@ -88,7 +88,7 @@ kiểm: phần đánh giá out-of-distribution trong
 `notebooks/executed/twodts-phan-tich.ipynb` đưa ba mô hình sang NF-ToN-IoT-v3
 và đo mức suy giảm.
 
-## 3. TE-G-SAGE — cấu hình thật và luận điểm trung tâm
+## 3. TE-G-SAGE, cấu hình thật và luận điểm trung tâm
 
 Cấu hình tốt nhất sau tìm kiếm lưới của nhóm tác giả:
 
@@ -114,8 +114,8 @@ lượng có nhãn pha trộn.
 Lý do dùng nhúng đỉnh hằng số: "enables the model to treat nodes as anonymous
 routers of flow context and **avoids leaking host labels into the encoder**".
 Điểm này biện minh trực tiếp cho thí nghiệm phân rã thành phần "bỏ định danh
-đỉnh" của đồ án — đó không phải một phép thử tuỳ hứng mà là tái hiện một quyết
-định thiết kế có chủ đích của TE-G-SAGE.
+đỉnh" của đồ án. Thí nghiệm này tái hiện một quyết định thiết kế có chủ đích
+của TE-G-SAGE.
 
 Đồ án không cài đặt lại TE-G-SAGE. Số liệu GCN, TE-G-SAGE và XGBoost trong báo
 cáo được trích từ Bảng 7 của bài gốc. Vai trò của cấu trúc đồ thị trong mô hình

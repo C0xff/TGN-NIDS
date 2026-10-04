@@ -148,8 +148,8 @@ truyền tin của mạng đồ thị khuếch đại các tín hiệu dùng chu
 
 Triết lý thiết kế của họ: trong an ninh mạng, thà chấp nhận một tỷ lệ cảnh báo giả
 nhất định để đẩy độ thu hồi lên cao, còn hơn bỏ sót tấn công. Đồ án kế thừa định
-hướng này, với phần giải thích đóng vai trò bộ lọc trực quan giúp người trực rà
-soát cảnh báo.
+hướng này và dùng phần giải thích làm bộ lọc trực quan giúp người trực rà soát
+cảnh báo.
 
 **Hai hàng của Bảng 7 mà báo cáo bắt buộc phải có:** XGBoost
 đạt Macro F1 **0,56782** và GCN đạt **0,38781**, đo trên cùng bộ dữ liệu và cùng

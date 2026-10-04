@@ -25,7 +25,7 @@ scripts/
 
 ---
 
-## 2. `pipeline/` — dữ liệu và thực nghiệm
+## 2. `pipeline/` (dữ liệu và thực nghiệm)
 
 | Tệp | Việc nó làm |
 |---|---|
@@ -38,7 +38,7 @@ mô hình, hoặc đồng bộ kết quả thực nghiệm.
 
 ---
 
-## 3. `analysis/` — phân tích, lập bảng, kiểm toán
+## 3. `analysis/` (phân tích, lập bảng, kiểm toán)
 
 Các script tổng hợp và kiểm toán chỉ đọc kết quả đã chốt. Hai script đo lường
 có phạm vi riêng: `supplementary_measurements.py` huấn luyện các baseline dạng

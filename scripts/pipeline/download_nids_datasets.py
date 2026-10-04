@@ -1,14 +1,9 @@
 """Tải các bộ dữ liệu NetFlow từ Hugging Face về data/raw.
 
-Sáu bộ dùng trong đồ án đều do nhóm nghiên cứu của University of Queensland
-phát hành, bản đã chuyển sang Parquet trên Hugging Face. Tải thẳng từ đó thay
-vì từ trang gốc vì bản gốc là CSV nén, giải nén ra hàng chục GB.
+Các bộ do University of Queensland phát hành, bản Parquet trên Hugging Face.
+Bản v2 có 43 cột, không có cột địa chỉ IP; bản v3 có 55 cột và có địa chỉ.
 
-Bản đặc trưng thứ hai có 43 cột và KHÔNG có cột địa chỉ IP; bản thứ ba có 55 cột
-và có địa chỉ. Đồ án dựng đồ thị máy chủ nên phần thí nghiệm chính chỉ dùng được
-bản thứ ba; bản thứ hai giữ lại để đối sánh với các công trình công bố trên nó.
-
-Chạy:  python scripts/download_nids_datasets.py
+Chạy:  python scripts/pipeline/download_nids_datasets.py
 """
 
 from __future__ import annotations
@@ -64,10 +59,7 @@ data/raw/nf-unsw-nb15-v3/
     )
 
 
-# Phiên bản bộ dữ liệu trên Hugging Face. Ghim để lần tải sau lấy đúng bản đã
-# dùng cho kết quả trong báo cáo: kho trên Hugging Face có thể được tác giả cập
-# nhật, và khi đó một lần chạy lại sẽ dùng dữ liệu khác mà không có dấu hiệu nào.
-# Đặt None nghĩa là lấy bản mới nhất, chỉ dùng khi khảo sát.
+# Ghim phiên bản trên Hugging Face để tải lại đúng dữ liệu đã dùng. None là bản mới nhất.
 DATASET_REVISION = "main"
 
 

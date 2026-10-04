@@ -9,10 +9,9 @@ PyTorch.
 
 ## 1. `torch.load` thật ra làm gì
 
-Khi lưu mô hình, PyTorch dùng một cơ chế của Python tên là **pickle**. Pickle
-không chỉ ghi lại con số; nó ghi lại **cách dựng lại một đối tượng Python**. Khi
-mở tệp, pickle làm đúng theo hướng dẫn ghi trong tệp: nhập gói này, gọi hàm kia,
-truyền tham số nọ.
+Khi lưu mô hình, PyTorch dùng cơ chế **pickle** của Python. Pickle ghi lại cả
+**cách dựng lại một đối tượng Python**, nên khi mở tệp nó sẽ nhập gói, gọi hàm và
+truyền tham số theo đúng hướng dẫn ghi trong tệp.
 
 Đó là chỗ nguy hiểm. Một tệp `.pt` do người khác gửi có thể chứa hướng dẫn làm
 bất cứ việc gì: đọc tệp trên máy, gửi dữ liệu ra ngoài, xoá thư mục. **Mở tệp là
@@ -33,8 +32,7 @@ Toàn bộ chỗ nạp checkpoint trong dự án dùng `weights_only=True`.
 
 ## 2. Vì sao tệp trọng số buộc phải chứa bộ tiền xử lý
 
-Tệp trọng số của đồ án không chỉ chứa trọng số. Nó còn phải chứa **bộ tiền xử
-lý**, và đây là thứ bắt buộc chứ không phải tuỳ chọn.
+Ngoài trọng số, tệp của đồ án bắt buộc chứa **bộ tiền xử lý**.
 
 Lý do: trước khi đưa vào mô hình, mỗi cột đặc trưng được **chuẩn hoá**, tức trừ
 đi trung bình rồi chia cho độ lệch chuẩn của chính cột đó, đo trên tập huấn

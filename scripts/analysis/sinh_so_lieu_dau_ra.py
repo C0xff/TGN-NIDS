@@ -1,7 +1,6 @@
 """Sinh tài liệu mô tả đầy đủ số liệu đầu ra, đọc trực tiếp từ models/saved.
 
-Mọi con số trong tệp sinh ra đều lấy từ result_*.json, kèm đường dẫn tệp và khoá
-JSON, nên không có chỗ cho số không nguồn.
+Mỗi con số kèm đường dẫn tệp result_*.json và khoá JSON nguồn.
 """
 import json
 import sys
@@ -43,9 +42,7 @@ BO = {
     "nf_cse_cic_ids2018_v3": "NF-CSE-CIC-IDS2018-v3",
 }
 
-# Quy mô bộ dữ liệu gốc, trước mọi phép rút mẫu. Cần nêu kèm vì trường
-# sample_ratio trong result_*.json chỉ ghi phép rút mẫu do chính runner thực
-# hiện, không ghi phép rút mẫu đã làm trước khi dữ liệu đi vào runner.
+# Quy mô bộ dữ liệu gốc trước khi rút mẫu; sample_ratio chỉ ghi phép rút mẫu của runner.
 GOC = {}
 for _cay in ("twoDTS_train_v2", "twoDTS_train_v3"):
     _p = PROJ / "models/saved" / _cay / "02_ho_so_du_lieu" / "tables" / "ho_so_du_lieu.csv"
@@ -148,9 +145,7 @@ for cay, o, ten in TEP:
         sl(sp["test"]["count"]), sl(sp["test"]["attacks"]),
         pc(sp["test"]["attacks"] / sp["test"]["count"])))
     w("| Số đỉnh đồ thị | {} |".format(sl(d["n_nodes"])))
-    # Mật độ luồng trên mỗi đỉnh, tính từ số luồng tập huấn luyện chia số đỉnh.
-    # Đây là đại lượng giải thích vì sao TGN hoạt động tốt trên bộ này và kém
-    # trên bộ kia, nên phải tính từ tệp kết quả chứ không gõ tay.
+    # Mật độ luồng trên mỗi đỉnh: số luồng tập huấn luyện chia số đỉnh.
     mat_do = Decimal(sp["train"]["count"]) / Decimal(d["n_nodes"])
     w("| Mật độ luồng huấn luyện trên mỗi đỉnh | {} luồng |".format(
         format(mat_do.quantize(Decimal("0.01")), "f").replace(".", ",")))

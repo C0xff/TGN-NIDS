@@ -1,6 +1,5 @@
-# Khai báo dự án theo PEP 621. Bố cục src-layout: mã nguồn nằm trong src/tgn_nids
-# nên chỉ import được sau khi cài đặt hoặc sau khi thêm src/ vào sys.path. Cách
-# này ngăn việc vô tình import nhầm từ thư mục làm việc thay vì từ bản đã cài.
+# Khai báo dự án theo PEP 621, bố cục src-layout. Gói tgn_nids chỉ import được
+# sau khi cài đặt hoặc khi src/ có trong sys.path.
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -8,17 +7,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tgn-nids"
-# Dự án có HAI số phiên bản và chúng không đo cùng một thứ, nên đừng đồng bộ
-# chúng với nhau.
-#
-#   version ở đây      : phiên bản gói phần mềm, đếm từ khi bắt đầu dự án.
-#   SOURCE_VERSION     : ở `src/tgn_nids/__init__.py`, phiên bản của phương
-#                        pháp thực nghiệm. Cả sáu tệp `result_*.json` đều mang
-#                        giá trị này, và ô nạp mô hình của notebook phân tích
-#                        dừng với lỗi khi checkpoint mang một giá trị khác.
-#
-# Đổi `version` không ảnh hưởng kết quả nào. Đổi `SOURCE_VERSION` làm mọi
-# checkpoint đã lưu không nạp lại được, nên tuyệt đối không đổi.
+# version là phiên bản gói phần mềm. SOURCE_VERSION trong src/tgn_nids/__init__.py
+# là phiên bản phương pháp thực nghiệm, được ghi vào mọi tệp result_*.json.
+# Hai số độc lập với nhau. Không đổi SOURCE_VERSION, vì notebook phân tích từ
+# chối nạp checkpoint mang giá trị khác.
 version = "2.8.0"
 description = "Phát hiện xâm nhập mạng bằng Temporal Graph Network kết hợp XAI, trên NF-UNSW-NB15, NF-CSE-CIC-IDS2018 và NF-ToN-IoT"
 requires-python = ">=3.10"
@@ -34,7 +26,7 @@ dependencies = { file = ["requirements.txt"] }
 where = ["src"]
 
 [tool.pytest.ini_options]
-# Thêm src vào sys.path khi chạy pytest, để khỏi phải cài đặt gói mỗi lần sửa
+# Cho pytest import được tgn_nids mà không cần cài gói.
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-q"

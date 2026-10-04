@@ -142,8 +142,8 @@ liệu toàn văn và gói Kaggle qua bốn thư mục `data/`, `models/`, `refe
 
 ## Nhóm thực hiện
 
-- **Phạm Văn Cường** — 25410027
-- **Đặng Thiên Phước** — 25410111
+- **Phạm Văn Cường** (25410027)
+- **Đặng Thiên Phước** (25410111)
 - **Giảng viên hướng dẫn:** TS. Phan Thế Duy
 
 Đồ án tốt nghiệp ngành Trí tuệ nhân tạo, Trường Đại học Công nghệ Thông tin,

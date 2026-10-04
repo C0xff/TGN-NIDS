@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 """Dựng lại tệp Parquet từ CSV gốc, kèm bước đối chiếu từng ô.
 
-Phép chuyển đổi ở đây **không ép kiểu**. Ép float64 xuống float32 tiết kiệm bộ
-nhớ nhưng làm mất chữ số có nghĩa, khiến bản Parquet không còn là bản sao trung
-thực của dữ liệu đã công bố. Parquet trong dự án chỉ đóng vai trò vật chứa, nên
-đọc ra phải bằng đúng giá trị trong CSV.
-
-Sau khi ghi, script đọc lại tệp Parquet và đối chiếu với CSV trên bốn mặt: số
-dòng, tên cột, số mẫu tấn công so với con số nhà phát hành công bố, và so sánh
-từng ô trên toàn bộ bảng.
+Không ép kiểu, để Parquet giữ đúng giá trị của CSV. Sau khi ghi, đối chiếu số
+dòng, tên cột, số mẫu tấn công với số công bố, và từng ô của bảng.
 
 Dùng:
-    python scripts/rebuild_parquet.py                 # dựng lại cả v2 và v3
-    python scripts/rebuild_parquet.py --only v3
+    python scripts/pipeline/rebuild_parquet.py                 # dựng lại cả v2 và v3
+    python scripts/pipeline/rebuild_parquet.py --only v3
 """
 
 import argparse
@@ -29,9 +23,7 @@ import pyarrow.parquet as pq
 # Windows lẫn macOS mà không cần sửa đường dẫn.
 GOC = Path(__file__).resolve().parents[2]
 
-# Số dòng và số mẫu tấn công do University of Queensland công bố kèm bản phát
-# hành. Đây là mốc đối chiếu bên ngoài: khớp thì bản Parquet dựng lại đúng là
-# bộ dữ liệu gốc, lệch thì tệp CSV nguồn đã hỏng hoặc bị cắt.
+# Số dòng và số mẫu tấn công do University of Queensland công bố, dùng để đối chiếu.
 BO_DU_LIEU = {
     "v2": {
         "csv": "data/raw/nf-unsw-nb15-v2/NF-UNSW-NB15-v2.csv",
@@ -113,12 +105,7 @@ def chuyen_doi(ten: str, cau_hinh: dict) -> bool:
                    n_tan_cong == cong_bo["tan_cong"],
                    f"{n_tan_cong:,} / công bố {cong_bo['tan_cong']:,}"))
 
-    # So sánh TỪNG Ô trên toàn bộ bảng.
-    #
-    # Không dùng phép cộng dồn để đối chiếu. Cộng 2,4 triệu số thực theo hai
-    # thứ tự khác nhau cho kết quả lệch ở chữ số thứ mười lăm do làm tròn dấu
-    # phẩy động, và phép kiểm sẽ báo sai lệch dù dữ liệu giống hệt. So từng
-    # phần tử vừa chặt chẽ hơn vừa đúng bản chất của việc cần kiểm.
+    # So từng ô; cộng dồn số thực theo thứ tự khác nhau sẽ lệch do làm tròn.
     lech = []
     for c in bang.column_names:
         cot_csv, cot_pq = bang[c].combine_chunks(), lai[c].combine_chunks()

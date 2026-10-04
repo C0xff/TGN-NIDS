@@ -2,9 +2,7 @@
 """
 Dựng tài liệu kết quả đo lường từ các tệp JSON của những lần chạy thật.
 
-Mọi con số trong tài liệu sinh ra đều đọc thẳng từ tệp kết quả của lần chạy
-thật, không chép tay, nên không có nguy cơ sai lệch giữa báo cáo và dữ liệu
-gốc. Chạy lại script sau mỗi notebook để tài liệu luôn khớp.
+Mọi con số đọc thẳng từ tệp kết quả, không chép tay. Chạy lại sau mỗi notebook.
 
     python3 scripts/analysis/tong_hop_ket_qua.py
 """
@@ -26,29 +24,17 @@ from tgn_nids.utils.format import percent as format_percent  # noqa: E402
 RESULTS_ROOT = os.path.join(PROJECT_ROOT, "models")
 OUTPUT_PATH = os.path.join(PROJECT_ROOT, "docs", "KET_QUA_DO_LUONG.md")
 
-# Chỉ số nhị phân và chỉ số đa lớp phải đọc bằng hai bộ khoá khác nhau. Trộn
-# lẫn chúng chính là lỗi đã làm hỏng bảng đối sánh của giai đoạn trước.
-# f1_macro nằm trong danh sách binary vì GraphIDS và Anomal-E công bố chỉ số
-# này cho bài toán hai lớp. Thiếu nó thì không đặt cạnh số liệu của họ được.
+# Chỉ số nhị phân và đa lớp đọc bằng hai bộ khoá riêng. f1_macro có trong bộ
+# nhị phân vì GraphIDS và Anomal-E công bố chỉ số này cho bài toán hai lớp.
 BINARY_METRICS = ["f1", "f1_macro", "precision", "recall", "far", "pr_auc",
                   "roc_auc", "accuracy", "balanced_accuracy"]
 MULTICLASS_METRICS = ["f1_macro", "precision_macro", "recall_macro",
                       "far_macro", "accuracy"]
 
 
-# Những sửa đổi làm kết quả cũ hết hiệu lực. Chỉ liệt kê sửa đổi thật sự đổi
-# kết quả, chứ không phải mọi lần nâng số hiệu: đánh dấu tràn lan thì cảnh báo
-# mất tác dụng, còn bỏ sót thì có nguy cơ trích dẫn số liệu đã hỏng.
-#
-# Mỗi mục gồm dòng đánh số mà nó thuộc về, phiên bản mang bản sửa, phạm vi ảnh
-# hưởng, và lý do.
-#
-# Trường `line` là bắt buộc vì dự án có hai dòng đánh số phiên bản không liên
-# tục với nhau. Bộ thí nghiệm bốn notebook chạy trên dòng 2.x; kiến trúc hai
-# giai đoạn hiện hành là một bản viết lại và bắt đầu lại từ 1.0.0. So sánh
-# thẳng hai dòng cho kết quả vô nghĩa: 1.1.0 nhỏ hơn 2.1.0 về mặt số học, nên
-# mọi kết quả của kiến trúc hiện hành sẽ bị đánh dấu hết hiệu lực bởi những bản
-# sửa mà chính nó đã mang sẵn từ đầu.
+# Những sửa đổi làm kết quả cũ hết hiệu lực, chỉ gồm sửa đổi thật sự đổi kết quả.
+# Trường `line` tách hai dòng đánh số phiên bản: bộ bốn notebook cũ dùng 2.x, còn
+# kiến trúc hai giai đoạn viết lại từ 1.0.0, nên hai dòng không so sánh với nhau.
 INVALIDATIONS = [
     {
         "line": 2,
@@ -94,9 +80,7 @@ def as_tuple(version: str):
 def invalidations_for(result):
     """Những sửa đổi khiến một kết quả cụ thể hết hiệu lực.
 
-    Một quy tắc chỉ áp cho kết quả thuộc **cùng dòng đánh số** với nó. Kết quả
-    của dòng khác không nằm trong tầm áp dụng, vì số hiệu của hai dòng không so
-    sánh được với nhau.
+    Mỗi quy tắc chỉ áp cho kết quả cùng dòng đánh số phiên bản với nó.
     """
     version = as_tuple(result.get("source_version", "0"))
     return [rule for rule in INVALIDATIONS
@@ -118,14 +102,8 @@ CURRENT_VERSION = current_source_version()
 def percent(value, digits=PERCENT_DECIMALS):
     """Hiển thị một tỷ lệ dưới dạng phần trăm theo đúng quy tắc mục 2.4.
 
-    Dấu thập phân là dấu phẩy theo quy ước tiếng Việt, giống hệt phần thân bài
-    của báo cáo, để hai nơi không hiện cùng một con số theo hai kiểu khác nhau.
-
-    Gọi thẳng vào `tgn_nids.utils.format` thay vì tự định dạng. Bản tự định
-    dạng dùng hai chữ số và nhân trực tiếp với 100, nên một tỷ lệ cảnh báo sai
-    0,004158% hiện ra là `0.00%`, tức một hệ thống có báo động giả trông như
-    không hề có; còn diện tích dưới đường ROC 99,999189% hiện ra là `100.00%`,
-    tức một bộ phân loại chưa hoàn hảo trông như hoàn hảo.
+    Dấu thập phân là dấu phẩy như trong báo cáo. Dùng `tgn_nids.utils.format`
+    để giá trị rất nhỏ hoặc rất gần 100% không bị làm tròn thành 0.00% hay 100.00%.
     """
     return format_percent(value, decimals=digits)
 
@@ -133,10 +111,7 @@ def percent(value, digits=PERCENT_DECIMALS):
 def so_nguyen(value):
     """Số đếm, dấu phân cách nghìn theo quy ước tiếng Việt là dấu chấm.
 
-    Không dùng `f"{value:,}"` của Python, vì nó đặt dấu phẩy làm dấu phân cách
-    nghìn theo quy ước tiếng Anh. Trong một tệp mà mọi phần trăm đều dùng dấu
-    phẩy làm dấu thập phân, `236,549` đọc thành hai trăm ba mươi sáu phẩy năm
-    bốn chín thay vì hai trăm ba mươi sáu nghìn năm trăm bốn mươi chín.
+    Không dùng `f"{value:,}"`, vì dấu phẩy ở đây đã là dấu thập phân.
     """
     return "{:,}".format(int(value)).replace(",", ".")
 
@@ -152,12 +127,8 @@ def signed_percent(value):
 def trivial_baseline(metrics):
     """Mốc tầm thường của tập kiểm thử, và khoảng cách từ F1 đo được tới mốc.
 
-    Tỷ lệ mẫu dương lấy từ chính số mẫu của tập kiểm thử ghi trong tệp kết
-    quả, không lấy từ tỷ lệ của toàn bộ dữ liệu: mốc phải tính trên đúng tập
-    đã sinh ra con số F1 đặt cạnh nó.
-
-    Trả về (None, None) khi tệp kết quả không ghi đủ số mẫu hai lớp. Không
-    thay bằng số mặc định, vì một mốc bịa còn tệ hơn không có mốc.
+    Tỷ lệ mẫu dương lấy từ chính tập kiểm thử. Trả về (None, None) khi tệp kết
+    quả thiếu số mẫu hai lớp.
     """
     nguon = metrics.get("binary_equivalent", metrics)
     duong = nguon.get("support_attack")
@@ -177,10 +148,7 @@ def load_results():
     grouped = defaultdict(list)
     pattern = os.path.join(RESULTS_ROOT, "**", "result_*.json")
     for path in sorted(glob.glob(pattern, recursive=True)):
-        # Thư mục lưu trữ chứa kết quả đã bị thay thế, giữ làm chứng cứ chứ
-        # không đưa vào tài liệu số liệu. Trộn chúng vào đây là mời gọi trích
-        # nhầm. Tên thư mục lưu trữ có hậu tố _archive
-        # và bắt đầu bằng dấu gạch dưới, nên phải so đúng tiền tố đó.
+        # Bỏ qua thư mục lưu trữ kết quả cũ (tên chứa _archive).
         if os.sep + "_archive" in path:
             continue
         with open(path, encoding="utf-8") as handle:
@@ -295,10 +263,7 @@ def write_run_section(out, name, entries):
     multi = [(p, r) for p, r in entries if is_multiclass(r)]
     if multi:
         out.append("\n### Chỉ số, bài toán multiclass\n")
-        # Số lớp khác nhau giữa các cấu hình, nên câu mô tả phải đọc từ chính
-        # dữ liệu thay vì ghi cứng một con số. Ghi cứng "mười lớp" là sai ngay
-        # khi bảng có thêm một cấu hình mười lăm lớp, và cái sai đó không lộ ra
-        # vì bảng vẫn hiện đủ mọi hàng.
+        # Số lớp khác nhau giữa các cấu hình nên đọc từ dữ liệu, không ghi cứng.
         class_counts = sorted({len(r.get("class_names") or []) for _, r in multi})
         counts_text = " hoặc ".join(str(c) for c in class_counts if c)
         out.append(
@@ -323,9 +288,7 @@ def write_run_section(out, name, entries):
         for _, r in multi:
             values = " | ".join(percent(r["metrics"].get(m))
                                 for m in MULTICLASS_METRICS)
-            # Lấy từ nhánh binary_equivalent chứ không từ recall_macro: hai
-            # đại lượng khác nhau, và mục 2.7 bộ quy tắc cấm gán chỉ số đo
-            # trên bài toán này cho bài toán khác.
+            # Lấy từ binary_equivalent, không phải recall_macro.
             recall_tan_cong = r["metrics"].get("binary_equivalent", {}).get("recall")
             out.append(f"| `{r['config']['name']}` | {values} "
                        f"| {percent(recall_tan_cong)} |")
@@ -334,9 +297,7 @@ def write_run_section(out, name, entries):
             out.append(f"\n**Chi tiết từng lớp, `{r['config']['name']}`**\n")
             out.append("| Lớp | Precision | Recall | F1 | FAR | Support |")
             out.append("|---|---:|---:|---:|---:|---:|")
-            # Cùng đơn vị phần trăm với mọi bảng khác trong tài liệu. Bản
-            # trộn hai đơn vị buộc người đọc tự nhớ rằng 0,973 ở bảng này và
-            # 97,300% ở bảng trên là cùng một đại lượng.
+            # Cùng đơn vị phần trăm với các bảng khác.
             for entry in r["metrics"]["per_class"]:
                 out.append(
                     f"| {entry['name']} | {percent(entry['precision'])} "
@@ -554,10 +515,7 @@ def manual_section():
 
 if __name__ == "__main__":
     document = build_document() + manual_section()
-    # newline="\n" để tệp sinh ra giống nhau trên cả Windows lẫn macOS. Chế độ
-    # văn bản mặc định của Windows đổi mọi dấu xuống dòng thành CRLF, nên chạy
-    # script trên hai hệ điều hành sẽ cho hai tệp khác nhau ở từng dòng dù nội
-    # dung không đổi. `.gitattributes` của dự án cũng chốt `*.md text eol=lf`.
+    # newline="\n" để tệp sinh ra giống nhau trên Windows và macOS.
     with open(OUTPUT_PATH, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(document)
     print(f"Đã ghi: {OUTPUT_PATH}")

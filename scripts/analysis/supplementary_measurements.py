@@ -2,19 +2,14 @@
 """
 Các phép đo bổ trợ trên NF-UNSW-NB15-v3 mà báo cáo có công bố (mục 4.9.1).
 
-Script chỉ đọc: nạp dữ liệu gốc và dùng lại đúng giao thức chia tập cùng bộ
-tiền xử lý của dự án, không huấn luyện lại mô hình TGN, không ghi vào
-`models/saved/`. Kết quả ghi ra `models/supplementary/supplementary_measurements.json`, rồi
-`scripts/analysis/tong_hop_ket_qua.py` đọc tệp đó để dựng mục *Các phép đo bổ
-trợ* của `docs/KET_QUA_DO_LUONG.md`.
+Không huấn luyện lại TGN và không ghi vào `models/saved/`. Kết quả ghi ra
+`models/supplementary/supplementary_measurements.json` để
+`scripts/analysis/tong_hop_ket_qua.py` dựng mục phép đo bổ trợ.
 
-Hai nhóm phép đo:
-
-1. Lối tắt trong dữ liệu: số địa chỉ nguồn theo loại lưu lượng, giá trị TTL
-   phổ biến của hai lớp và ROC-AUC của riêng cột MAX_TTL, không huấn luyện gì.
-2. Mốc tham chiếu dạng bảng, không dùng đồ thị: cây quyết định sâu 3 (đủ 49
-   thuộc tính và bỏ hai cột TTL) và hồi quy logistic, theo giao thức chia tập
-   TE-G-SAGE để đặt cạnh số liệu của bài báo đó.
+1. Lối tắt trong dữ liệu: địa chỉ nguồn theo loại lưu lượng, TTL phổ biến của
+   hai lớp và ROC-AUC của riêng MAX_TTL.
+2. Mốc dạng bảng theo giao thức chia tập TE-G-SAGE: cây quyết định sâu 3 (đủ
+   49 thuộc tính và bỏ hai cột TTL) và hồi quy logistic.
 
     python scripts/analysis/supplementary_measurements.py
 

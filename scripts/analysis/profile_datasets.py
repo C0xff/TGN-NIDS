@@ -1,9 +1,8 @@
 """In bảng tóm tắt quy mô của các bộ dữ liệu thô, dạng Markdown dán thẳng vào tài liệu.
 
-Chỉ đọc phần siêu dữ liệu của tệp Parquet chứ không nạp nội dung, nên chạy trong
-vài giây kể cả với bộ 20 triệu luồng.
+Chỉ đọc siêu dữ liệu Parquet nên chạy trong vài giây.
 
-Chạy:  python scripts/profile_datasets.py
+Chạy:  python scripts/analysis/profile_datasets.py
 """
 
 import os
@@ -16,9 +15,7 @@ import pyarrow.parquet as pq
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 
-# Tên hiển thị và đường dẫn tương ứng. Tên thư mục viết thường, tên tệp giữ đúng
-# hoa thường như bản phát hành gốc: Linux phân biệt hoa thường nên viết sai là
-# tệp không tìm thấy khi chạy trên Kaggle.
+# Tên tệp giữ đúng hoa thường như bản phát hành, vì Linux phân biệt hoa thường.
 DATASETS = [
     ("NF-UNSW-NB15-v3", RAW_DIR / "nf-unsw-nb15-v3" / "NF-UNSW-NB15-v3.parquet"),
     ("NF-UNSW-NB15-v2", RAW_DIR / "nf-unsw-nb15-v2" / "NF-UNSW-NB15-v2.parquet"),
@@ -52,8 +49,6 @@ def main():
 def bang_nen():
     """In bảng đối chiếu dung lượng CSV gốc với Parquet nén Snappy.
 
-    Phép chia đặt trong script thay vì tính tay rồi dán số vào tài liệu: mức
-    giảm là một giá trị suy ra, nên nó phải dựng lại được bằng một lệnh.
     """
     print()
     print("| Bộ dữ liệu | CSV gốc | Parquet | Mức giảm |")

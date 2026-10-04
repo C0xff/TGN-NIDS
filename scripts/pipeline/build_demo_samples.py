@@ -1,6 +1,6 @@
 """Sinh ba tệp dữ liệu demo cho dashboard, theo quy tắc ở docs/QUY_TAC_SINH_TAP_DEMO.md.
 
-Chạy:  PYTHONPATH=src python scripts/build_demo_samples.py
+Chạy:  PYTHONPATH=src python scripts/pipeline/build_demo_samples.py
 """
 from pathlib import Path
 
@@ -66,8 +66,7 @@ def _allocate_counts(counts, n_rows, ensure_each=True):
 def stratified_sample(frame, n_rows, label_column="Attack", seed=SEED):
     """Rút n_rows dòng, giữ nguyên tỷ lệ giữa các lớp của khung gốc.
 
-    Rút đều trên toàn bộ dòng sẽ làm biến mất các lớp hiếm, mà lớp hiếm lại
-    chính là thứ người xem demo muốn thấy mô hình xử lý ra sao.
+    Giữ tỷ lệ lớp để các lớp hiếm vẫn có mặt trong tệp demo.
     """
     if len(frame) <= n_rows:
         return frame.copy()
@@ -82,9 +81,7 @@ def stratified_sample(frame, n_rows, label_column="Attack", seed=SEED):
         for label, group in groups
     ])
 
-    # Tệp có mốc thời gian thật phải được phát lại theo đúng mốc đó. Chỉ số
-    # dòng gốc không tương đương thứ tự thời gian sau khi khung đã được sắp và
-    # lấy mẫu theo lớp.
+    # Phát lại theo mốc thời gian thật, không theo chỉ số dòng.
     if TIME_COLUMN in sampled.columns:
         return sampled.sort_values(TIME_COLUMN, kind="mergesort")
     return sampled.sort_index(kind="mergesort")
@@ -147,8 +144,6 @@ def stratified_sample_parquet(path, n_rows, label_column="Attack", seed=SEED):
 def build_in_distribution():
     """Tệp 1: lấy từ tập kiểm thử của chính bộ dữ liệu mô hình đã học.
 
-    Đây là tệp cho thấy mô hình chạy đúng như con số trong báo cáo, vì nó dùng
-    đúng phần dữ liệu đã sinh ra con số đó.
     """
     frame = pd.read_parquet(RAW / "nf-unsw-nb15-v3" / "NF-UNSW-NB15-v3.parquet")
 
@@ -178,9 +173,7 @@ def build_in_distribution():
 def build_unseen_with_addresses():
     """Tệp 2: bộ dữ liệu khác hẳn, vẫn có cột địa chỉ.
 
-    Không phải tập huấn luyện của mô hình, cũng không phải bộ dùng cho phần đánh
-    giá out-of-distribution, nên dùng làm demo không đụng vào bất kỳ phép đo nào của
-    báo cáo.
+    Không trùng tập huấn luyện hay bộ dùng cho đánh giá ngoài phân phối.
     """
     path = RAW / "nf-cse-cic-ids2018-v3" / "NF-CSE-CIC-IDS2018-v3.parquet"
     return stratified_sample_parquet(path, DEMO_ROWS), "demo_2_bo_du_lieu_la.csv"
@@ -189,8 +182,7 @@ def build_unseen_with_addresses():
 def build_missing_address_columns():
     """Tệp 3: bộ thiếu hẳn cột địa chỉ, dùng để minh hoạ giới hạn.
 
-    Giữ lại có chủ đích. Đây là tệp cho thấy dashboard xử lý ra sao khi dữ liệu
-    thu thập thật không kèm địa chỉ máy, tình huống rất phổ biến ngoài thực tế.
+    Cho thấy dashboard xử lý ra sao khi dữ liệu không kèm địa chỉ máy.
     """
     path = RAW / "nf-cse-cic-ids2018-v2" / "NF-CSE-CIC-IDS2018-V2.parquet"
     return stratified_sample_parquet(path, DEMO_ROWS), "demo_3_thieu_cot_dia_chi.csv"

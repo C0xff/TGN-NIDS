@@ -1,31 +1,17 @@
 """Đo ba tệp demo bằng chính động cơ suy luận của bảng điều khiển.
 
-Ba bảng của Chương 4 nói về hành vi hệ thống trên tệp demo. Trước đây chúng được
-đo bằng một script tạm chỉ in ra màn hình, nên không tệp kết quả nào đứng sau.
-Script này đo lại và **ghi ra đĩa**, để mọi con số trích vào báo cáo đều truy
-được về một tệp.
+Kết quả ghi vào `models/saved/twoDTS_demo/`; trọng số trong
+`models/saved/twoDTS_train_*` chỉ được đọc.
 
     PYTHONPATH="src:apps/dashboard" python scripts/analysis/do_tap_demo.py
 
-Đây là script chỉ đọc đối với `models/saved/twoDTS_train_*`: nó nạp trọng số,
-không ghi đè gì, và chỉ tạo mới cây `models/saved/twoDTS_demo/`.
+Mỗi tệp đo ở hai trạng thái bộ nhớ:
 
-Mỗi tệp demo đo ở **hai trạng thái bộ nhớ**, vì mô hình mang bộ nhớ theo đỉnh
-cho kết quả khác nhau tuỳ trạng thái lúc bắt đầu:
+- `checkpoint`: `engine.reset_memory()` khôi phục bảng nhớ đã lưu trong tệp trọng số.
+- `xoa_trang`: `memory_module.reset_state()` đặt bảng nhớ về không.
 
-- `checkpoint`: khôi phục bảng nhớ về đúng trạng thái lưu trong tệp trọng số,
-  bằng `engine.reset_memory()`. Đây là trạng thái sạch, không mang dấu vết của
-  tệp demo đo trước đó.
-- `xoa_trang`: đặt toàn bộ bảng nhớ về không, bằng `memory_module.reset_state()`.
-
-Hai lời gọi này khác nhau và tên của chúng dễ gây nhầm: `reset_memory` của động
-cơ suy luận **khôi phục** chứ không xoá. Đo mà gọi nhầm thì hai trạng thái ra
-cùng một kết quả và tưởng là bộ nhớ không ảnh hưởng gì.
-
-Hạn chế phải nêu kèm mọi con số của trạng thái `checkpoint`: vòng đánh giá lưu
-checkpoint **sau** khi đã chạy qua tập kiểm thử, nên bảng nhớ trong tệp trọng số
-đã mang thông tin của tập đó. Con số ở trạng thái này vì vậy lạc quan hơn tình
-huống triển khai thật.
+Checkpoint được lưu sau khi đã đi qua tập kiểm thử, nên số đo ở trạng thái
+`checkpoint` lạc quan hơn khi triển khai thật.
 """
 from __future__ import annotations
 
@@ -63,10 +49,8 @@ def ty_le(tu: int, mau: int):
 def ho_so_dinh(data: "pd.DataFrame", dinh_da_biet: set, so_o: int) -> dict:
     """Đếm địa chỉ của một tệp và xem bao nhiêu địa chỉ có ô nhớ riêng.
 
-    Bảng nhớ có kích thước cố định từ lúc huấn luyện. Địa chỉ đã gặp lúc huấn
-    luyện có ô riêng; địa chỉ lạ bị băm vào một ô đã có chủ bằng
-    `zlib.crc32(địa_chỉ) % số_ô`, nên nhiều máy không liên quan dùng chung một
-    vector nhớ và mô hình đọc lịch sử của máy khác để quyết định.
+    Địa chỉ lạ được băm vào ô có sẵn bằng `zlib.crc32(địa_chỉ) % số_ô`, nên có
+    thể dùng chung vector nhớ với máy khác.
     """
     if "IPV4_SRC_ADDR" not in data.columns or "IPV4_DST_ADDR" not in data.columns:
         return {"so_dinh": None, "dinh_co_o_rieng": None,

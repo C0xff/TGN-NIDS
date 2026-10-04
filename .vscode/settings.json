@@ -1,18 +1,10 @@
 {
-    // Thư mục chứa các môi trường ảo của dự án. Biến ${userHome} được VS Code
-    // thay theo từng hệ điều hành, nên đúng một dòng này chạy được trên cả hai:
-    //   Windows  ->  C:\Users\<tên>\.virtualenvs
-    //   macOS    ->  /Users/<tên>/.virtualenvs
-    // Vì vậy venv của hai máy phải đặt cùng tên "tgn-nids" trong thư mục đó.
-    //
-    // Venv cố tình nằm NGOÀI thư mục dự án: dự án nằm trong Google Drive, mà
-    // venv gắn chặt với hệ điều hành nên đồng bộ nó qua Drive vừa vô ích vừa
-    // tốn băng thông. Xem README mục "Quick start".
+    // Venv đặt ngoài dự án, tại ~/.virtualenvs/tgn-nids trên cả Windows và macOS,
+    // để Google Drive không đồng bộ nó. Cách tạo venv xem mục "Cài đặt" của README.
     "python.venvPath": "${userHome}/.virtualenvs",
 
-    // Bật lại khi mở lần đầu trên một máy mới: chọn interpreter "tgn-nids"
-    // trong bảng lệnh Python: Select Interpreter. Lựa chọn đó lưu theo từng
-    // máy, không ghi vào tệp này, nên hai hệ không ghi đè nhau.
+    // Lần đầu mở trên máy mới, chọn interpreter "tgn-nids" bằng lệnh
+    // Python: Select Interpreter. Lựa chọn này lưu theo từng máy.
     "python.terminal.activateEnvironment": true,
 
     "python.testing.pytestEnabled": true,
@@ -21,13 +13,9 @@
         "tests"
     ],
 
-    // Bố cục src-layout: mã nguồn nằm trong src/tgn_nids và dashboard trong
-    // apps/dashboard, nên cả hai phải có trong PYTHONPATH. Windows ngăn cách
-    // bằng dấu chấm phẩy, macOS và Linux bằng dấu hai chấm, nên phải tách làm
-    // ba khoá riêng thay vì một khoá chung.
-    //
-    // Hai biến UTF-8 chỉ cần trên Windows, để console không rơi về bảng mã cũ
-    // rồi hỏng khi chương trình in tiếng Việt có dấu.
+    // src và apps/dashboard phải nằm trong PYTHONPATH. Windows ngăn cách bằng
+    // dấu chấm phẩy nên mỗi hệ điều hành có một khoá riêng. Hai biến UTF-8 giúp
+    // console Windows in đúng tiếng Việt.
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "src;apps/dashboard",
         "PYTHONUTF8": "1",

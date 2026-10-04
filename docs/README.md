@@ -1,4 +1,4 @@
-# docs — tài liệu kỹ thuật và kết quả đầu ra
+# Tài liệu kỹ thuật và kết quả đầu ra (`docs/`)
 
 Thư mục này tập hợp số liệu đầu ra và tài liệu kỹ thuật công khai dùng để giải
 thích, đối chiếu kết quả của đồ án. Các tệp ở đây không thay thế dữ liệu, trọng
