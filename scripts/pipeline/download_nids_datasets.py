@@ -1,9 +1,12 @@
-"""Tải các bộ dữ liệu NetFlow từ Hugging Face về data/raw.
+"""Tải hai bộ NF-UNSW-NB15 về data/raw.
 
-Các bộ do University of Queensland phát hành, bản Parquet trên Hugging Face.
-Bản v2 có 43 cột, không có cột địa chỉ IP; bản v3 có 55 cột và có địa chỉ.
+Cả hai do University of Queensland phát hành. Bản v2 lấy từ bản sao Parquet trên
+Kaggle, bản v3 từ bản sao trên Hugging Face. Bản v2 có 45 cột, có hai cột địa chỉ
+IP nhưng không có mốc thời gian; bản v3 có 55 cột, thêm mốc thời gian và tám cột
+IAT. Các bộ khác của dự án không tải qua script này.
 
-Chạy:  python scripts/pipeline/download_nids_datasets.py
+Chạy:  python scripts/pipeline/download_nids_datasets.py              # chỉ ghi hướng dẫn tải
+       python scripts/pipeline/download_nids_datasets.py --download   # tải về data/raw
 """
 
 from __future__ import annotations

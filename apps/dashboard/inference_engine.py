@@ -129,11 +129,9 @@ PUBLISHED_BASELINES = {
     },
     "Anomal-E (KBS 2022)\nNF-UNSW-NB15-v2": {
         "dataset": "NF-UNSW-NB15-v2",
-        "accuracy": 0.9866,
-        "f1_macro": 0.9235,
-        "recall": 0.9877,
-        "detection_rate": 0.9877,
-        "note": "Bảng 4 của bài gốc, nhiễm bẩn 4%",
+        "f1_macro": 0.9156,
+        "pr_auc": 0.7489,
+        "note": "do nhóm GraphIDS chạy lại, độ lệch chuẩn 0,0217",
     },
 
     # NF-CSE-CIC-IDS2018 cho thí nghiệm mở rộng.
