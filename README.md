@@ -115,7 +115,7 @@ TGN-NIDS/
 ├── notebooks/
 │   └── executed/               # Bốn notebook đã chạy kèm đầu ra
 ├── references/
-│   └── TAI_LIEU_THAM_KHAO.md   # Danh mục trích dẫn của báo cáo
+│   └── README.md               # Ghi chú về tài liệu tham khảo
 ├── scripts/                    # Công cụ chuẩn bị dữ liệu và phân tích
 ├── src/                        # Mã nguồn thư viện tgn_nids
 ├── tests/                      # Bộ kiểm thử
@@ -130,13 +130,13 @@ TGN-NIDS/
 | [`apps/`](apps/README.md) | Dashboard và tài nguyên giao diện |
 | [`docs/`](docs/README.md) | Số liệu đầu ra, kiến trúc, giao thức và tài liệu chuyên đề |
 | [`notebooks/executed/`](notebooks/executed/README.md) | Notebook đã thực thi dùng để đối chiếu quá trình thực nghiệm |
-| [`references/TAI_LIEU_THAM_KHAO.md`](references/TAI_LIEU_THAM_KHAO.md) | 23 tài liệu được trích dẫn trong báo cáo |
-| [`scripts/`](scripts/README.md) | Script tải, chuẩn bị, kiểm tra và tổng hợp dữ liệu |
+| [`references/`](references/README.md) | Ghi chú về tài liệu tham khảo của đồ án |
+| [`scripts/`](scripts/README.md) | Script tải và chuẩn bị dữ liệu, đo bổ trợ, tổng hợp kết quả |
 | [`src/`](src/README.md) | Mã nguồn xử lý dữ liệu, mô hình, thực nghiệm và XAI |
 | [`tests/`](tests/README.md) | Kiểm thử các điều kiện ảnh hưởng đến tính đúng của kết quả |
 
 Google Drive của đồ án chia sẻ dữ liệu, checkpoint, kết quả thực nghiệm, tài
-liệu toàn văn và gói Kaggle qua bốn thư mục `data/`, `models/`, `references/`,
+liệu tham khảo và gói Kaggle qua bốn thư mục `data/`, `models/`, `references/`,
 `dist/`. Báo cáo Word, hồ sơ của trường và các tệp nội bộ khác không thuộc gói
 được chia sẻ.
 

@@ -125,10 +125,9 @@ vi, bất đối xứng để phân tích giao tiếp không đồng nhất, và
 lượng biểu diễn đỉnh.
 
 > **Loại khỏi bảng đối sánh.** Bài nằm sau tường phí IEEE, không có bản tiền ấn
-> mở, thư mục `references/` không có PDF. Không mở được bảng kết quả thì không
-> xác nhận được điều kiện đo của từng con số. Đề cương đã nộp có nêu bài này, nên
-> báo cáo **vẫn nhắc tới** ở dạng ghi chú trung thực về giới hạn phạm vi. Chi
-> tiết ở mục 2 của `references/GHI_CHU_TAI_LIEU.md`.
+> mở, nhóm không có bản toàn văn. Không mở được bảng kết quả thì không xác nhận
+> được điều kiện đo của từng con số. Đề cương đã nộp có nêu bài này, nên báo cáo
+> **vẫn nhắc tới** ở dạng ghi chú về giới hạn phạm vi.
 
 ### 2.4. TE-G-SAGE, giải thích được và đánh giá theo thời gian
 
@@ -264,7 +263,7 @@ lát cắt 60/30/10, còn kết quả chính của đồ án dùng 80/10/10. Bá
 khác biệt này thay vì xem các hàng là một phép xếp hạng tuyệt đối.
 
 Phần chỉ số trích từ PDF gốc của ba công trình đối sánh nằm ở mục 2 của chính
-tệp này, và đã đối chiếu bản gốc trong `references/`.
+tệp này, và đã đối chiếu với bản gốc của từng bài.
 
 ---
 

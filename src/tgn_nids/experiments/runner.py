@@ -173,6 +173,7 @@ def _class_weights(labels: torch.Tensor, n_classes: int, cap: float,
     if scheme == "none":
         return torch.ones(n_classes, dtype=torch.float32, device=device)
 
+    # Lớp càng ít mẫu thì weight càng lớn; sqrt làm giảm độ chênh lệch.
     counts = Counter(labels.cpu().numpy().tolist())
     total = len(labels)
     raw = np.array([total / (n_classes * max(1, counts.get(c, 0)))
@@ -181,6 +182,7 @@ def _class_weights(labels: torch.Tensor, n_classes: int, cap: float,
     if scheme == "sqrt_inverse":
         raw = np.sqrt(raw)
 
+    # Normalize về mean = 1 rồi chặn trần bằng cap.
     raw = raw / raw.mean()
     raw = np.minimum(raw, cap)
     return torch.tensor(raw, dtype=torch.float32, device=device)
@@ -191,12 +193,15 @@ def _calibrate_threshold(scores: np.ndarray, truths: np.ndarray,
     """Chọn ngưỡng trên tập kiểm định theo Macro F1 hoặc FAR."""
     from sklearn.metrics import f1_score
 
+    # Candidate threshold lấy theo quantile của score, dày ở vùng quantile cao (0.99-1.0).
     candidates = np.unique(np.quantile(scores, np.concatenate([
         np.linspace(0.05, 0.50, 100),
         np.linspace(0.50, 0.99, 200),
         np.linspace(0.99, 1.0, 300),
     ])))
 
+    # far: lấy threshold thấp nhất mà false alarm rate trên luồng Benign
+    # không vượt target.
     if strategy == "far":
         benign_scores = scores[truths == 0]
         for threshold in candidates:
@@ -205,6 +210,7 @@ def _calibrate_threshold(scores: np.ndarray, truths: np.ndarray,
                 return float(threshold)
         return float(candidates[-1])
 
+    # f1: lấy threshold cho macro F1 cao nhất.
     values = [f1_score(truths, (scores > c).astype(int),
                        average="macro", zero_division=0)
               for c in candidates]
@@ -251,6 +257,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         if verbose:
             print("------")
 
+    # Validate config, set seed và chọn device (GPU hoặc CPU).
     _validate_config(config, splits_provided=splits is not None)
     _set_seed(config.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -264,6 +271,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         f"| Mode: {config.mode} | Device: {device}")
     rule()
 
+    # Stratified sampling theo lớp nếu config yêu cầu (chỉ khi hàm tự split).
     if config.sample_ratio < 1.0 and splits is not None:
         raise ValueError(
             f"Cấu hình '{config.name}' vừa khai báo sample_ratio="
@@ -280,6 +288,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         log(f"Lấy mẫu phân tầng {config.sample_ratio:.0%}: "
             f"{before:,} -> {len(df):,} flow")
 
+    # Ablation: drop các cột feature được chỉ định khỏi dữ liệu.
     if config.ablate_features:
         missing = [c for c in config.ablate_features if c not in df.columns]
         if missing:
@@ -304,6 +313,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         log(f"Protocol yêu cầu tập train chỉ chứa lưu lượng benign: "
             f"đã loại {removed:,} flow tấn công")
 
+    # Đếm số flow và số attack của từng split, để log ra và lưu vào result.
     split_stats = {k: {"count": len(v), "attacks": int((v["Label"] == 1).sum())}
                    for k, v in splits.items()}
     for name, stat in split_stats.items():
@@ -327,6 +337,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
             f"chốt và bị quy về Benign. Kết quả đa lớp sẽ sai."
         )
 
+    # Lấy danh mục lớp và vị trí của Benign, rồi xác định số lớp đầu ra.
     class_names = [str(name) for name in preprocessor.label_encoder.classes_]
     benign_class_id = class_names.index("Benign") if "Benign" in class_names else 0
     n_classes = len(class_names) if config.task == "multiclass" else 2
@@ -338,11 +349,13 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
             "cột Attack của dữ liệu đầu vào."
         )
 
+    # Dựng temporal graph cho cả ba split bằng cùng một mapping IP sang node.
     builder = TemporalGraphBuilder()
     graphs = {k: builder.build_pyg_temporal_data(v) for k, v in splits.items()}
     edge_dim = graphs["train"].msg.shape[1]
     n_nodes = builder.get_node_count()
 
+    # Ablation: gán lại src và dst node ngẫu nhiên để xoá định danh của host.
     if config.ablate_node_identity:
         generator = np.random.default_rng(config.seed)
         for graph in graphs.values():
@@ -355,6 +368,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
 
     log(f"Edge features: {edge_dim} | Số node: {n_nodes:,}")
 
+    # Tạo hai khối dùng chung cho hai giai đoạn: memory theo node và embedding
+    # (attention).
     memory = TGNMemoryModule(num_nodes=n_nodes, raw_msg_dim=edge_dim,
                              memory_dim=config.memory_dim,
                              time_dim=config.time_dim).to(device)
@@ -388,6 +403,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                     f"Checkpoint {config.pretrained_encoder} thiếu khoá "
                     f"'{required}', không dùng làm bộ mã hoá được")
         saved_config = stage_one.get("config", {})
+
+        # Hai giai đoạn phải có cùng kích thước dim (memory, embedding, time).
         for field_name in ("memory_dim", "embedding_dim", "time_dim"):
             saved_value = saved_config.get(field_name)
             current_value = getattr(config, field_name)
@@ -397,6 +414,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                     f"giai đoạn này khai báo {current_value}. Hai giai đoạn "
                     f"phải dùng cùng kích thước biểu diễn.")
 
+        # Buffer theo node phụ thuộc số node của từng giai đoạn nên không nạp lại,
+        # chỉ nạp các parameter học được của memory.
         node_indexed_buffers = {"memory.memory", "memory.last_update",
                                 "memory._assoc"}
         learned_names = {name for name, _ in memory.named_parameters()}
@@ -413,6 +432,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         encoder_source = config.pretrained_encoder
         log(f"Đã nạp bộ mã hoá của giai đoạn thứ nhất từ "
             f"{os.path.basename(config.pretrained_encoder)}")
+
+        # Freeze encoder để giai đoạn này chỉ train classifier head.
         if config.freeze_encoder:
             for module in (memory, embedding):
                 for parameter in module.parameters():
@@ -421,6 +442,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
             log("Đã đóng băng khối bộ nhớ thời gian và khối nhúng. "
                 "Giai đoạn này chỉ huấn luyện đầu phân loại.")
 
+    # Chọn head theo mode: decoder tái thiết (giai đoạn một) hoặc classifier
+    # (giai đoạn hai).
     self_supervised = config.mode == "self_supervised"
     if self_supervised:
         head = EdgeFeatureDecoder(config.embedding_dim, edge_dim,
@@ -449,9 +472,11 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                                   else ["Benign", "Attack"], weights.tolist())))
         criterion = nn.CrossEntropyLoss(weight=weights)
 
+    # Class weights ghi vào result; giai đoạn một không dùng.
     class_weights_used = (None if self_supervised or weights is None
                           else [round(w, 4) for w in weights.tolist()])
 
+    # Chỉ đưa vào optimizer các parameter còn học được, encoder đã freeze thì bỏ qua.
     parameters = [parameter for module in (memory, embedding, head)
                   for parameter in module.parameters()
                   if parameter.requires_grad]
@@ -485,6 +510,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
             messages = data.msg[start:end].to(device)
             labels = all_labels[start:end].to(device)
 
+            # Gom các node trong batch, đọc memory của chúng rồi trộn thông tin neighbor
+            # thành embedding.
             node_ids, inverse = torch.cat([src, dst]).unique(return_inverse=True)
             src_idx, dst_idx = inverse[:len(src)], inverse[len(src):]
 
@@ -493,6 +520,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                 embedded = embedding(state, torch.stack([src_idx, dst_idx]),
                                      messages)
 
+            # Giai đoạn một: mask bớt feature, reconstruct lại và tính anomaly score.
             if self_supervised:
                 mask_seed = None if training else config.seed + i
                 with torch.set_grad_enabled(training):
@@ -511,6 +539,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                         finally:
                             head.eval_mask_samples = goc
             else:
+                # Giai đoạn hai: phân loại, tính loss và attack score của từng cạnh.
                 with torch.set_grad_enabled(training):
                     logits = head(embedded[src_idx], embedded[dst_idx],
                                   messages if config.classifier_edge_features
@@ -524,12 +553,15 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                         if config.task == "multiclass"
                         else probabilities[:, 1].cpu().numpy())
 
+            # Cập nhật weight, có clip gradient để training ổn định.
             if training:
                 optimizer.zero_grad()
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(parameters, 1.0)
                 optimizer.step()
 
+            # Ghi các cạnh của batch vào memory sau khi đã dự đoán, để batch hiện tại
+            # không thấy chính nó.
             with torch.no_grad():
                 memory.update_state(src, dst, timestamps, messages)
                 memory.detach_memory()
@@ -555,6 +587,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
     def checkpoint_path(label: str) -> str:
         return os.path.join(output_dir, f"{label}_{config.name}.pth")
 
+    # Mỗi epoch: reset memory, train, đo trên val, rồi lưu bản tốt nhất hoặc
+    # early stopping.
     for epoch in range(config.num_epochs):
         memory.reset_state()
         train_loss, *_ = run_pass(graphs["train"], True, need_scores=False)
@@ -564,6 +598,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                 need_scores=monitor_needs_scores,
                 score_samples=None)
 
+        # Tính đại lượng early stopping theo dõi; không tính được thì lùi về val_loss.
         monitored = _monitored_value(monitor, val_loss, val_truths,
                                      val_predictions, val_scores,
                                      benign_class_id, config.task)
@@ -588,6 +623,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
             log(f"Epoch {epoch + 1:>3} | Train loss: {train_loss:>10.5f} "
                 f"| Val loss: {val_loss:>10.5f}{extra}")
 
+        # Bản tốt nhất thì lưu checkpoint, ngược lại tăng bộ đếm patience.
         if is_best:
             best_score, patience, best_epoch = score, 0, epoch + 1
             best_loss = val_loss
@@ -619,6 +655,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         log(f"Nạp lại trọng số tốt nhất: epoch {best_epoch} "
             f"| Val loss: {best_loss:.5f} | chọn theo {chon_theo}")
 
+    # Chạy lại train, val, test liên tiếp để memory chảy đúng theo trình tự thời
+    # gian, rồi mới tính score trên test.
     memory.reset_state()
     run_pass(graphs["train"], False, need_scores=False)
     val_true = val_scores = None
@@ -629,6 +667,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
     _, y_true, y_pred, y_score = run_pass(graphs["test"], False)
     inference_time = time.time() - inference_started
 
+    # Xác định có cần calibrate threshold không và quy đổi nhãn multiclass về
+    # binary khi cần.
     needs_threshold = self_supervised or (
         config.threshold_strategy is not None and config.task == "binary")
 
@@ -639,6 +679,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
     test_binary_true = to_binary(y_true)
     argmax_binary_pred = None if y_pred is None else to_binary(y_pred)
 
+    # Chọn threshold trên val rồi áp lên test.
     threshold = None
     if needs_threshold:
         strategy = config.threshold_strategy or "f1"
@@ -654,6 +695,8 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
         log(f"Threshold hiệu chỉnh trên tập val theo chiến lược "
             f"'{strategy}': {threshold:.6f}")
 
+    # Metric chính: multiclass dùng argmax, các trường hợp còn lại dùng binary
+    # theo threshold.
     if config.task == "multiclass" and not needs_threshold:
         metrics = evaluate_multiclass(y_true, y_pred, class_names, benign_class_id)
     else:
@@ -695,6 +738,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
                 f"| Recall: {point['recall'] * 100:>6.2f}% "
                 f"| FAR: {point['far'] * 100:>7.3f}%")
 
+    # Gom config, thống kê và metrics thành một bản result để lưu ra JSON.
     result = {
         "source_version": SOURCE_VERSION,
         "run_finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -762,6 +806,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
     log(f"Đã ghi mô hình: {model_path} "
         f"({os.path.getsize(model_path) / 1024 / 1024:.1f} MB)")
 
+    # Lưu score và nhãn dự đoán của test để vẽ hình về sau.
     predictions_path = os.path.join(output_dir, f"predictions_{config.name}.npz")
     np.savez_compressed(
         predictions_path,
@@ -774,6 +819,7 @@ def run_experiment(df: pd.DataFrame, config: ExperimentConfig,
     )
     log(f"Đã ghi dự đoán tập test: {predictions_path}")
 
+    # Ghi bản result ra tệp JSON.
     path = os.path.join(output_dir, f"result_{config.name}.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False, default=float)

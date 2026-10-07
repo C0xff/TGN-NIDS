@@ -8,9 +8,7 @@ Quy tắc: số đo của đồ án lấy từ `docs/KET_QUA_DO_LUONG.md`, số 
 công bố thì chép từ bảng trong bài gốc kèm số hiệu bảng và điều kiện đo, và hai
 loại không bao giờ trộn vào cùng một cột.
 
-Danh mục tài liệu tham khảo đang dùng nằm ở
-`references/TAI_LIEU_THAM_KHAO.md`, gồm 23 mục theo số hiệu trích dẫn của báo
-cáo.
+Danh mục tài liệu tham khảo dùng số hiệu trích dẫn của báo cáo, gồm 23 mục.
 
 ---
 

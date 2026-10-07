@@ -1,7 +1,7 @@
 # Thư mục `scripts/`
 
-Toàn bộ kịch bản phụ trợ của dự án: chuẩn bị dữ liệu, chạy thực nghiệm, phân
-tích kết quả, kiểm toán chất lượng và vận hành.
+Các kịch bản phụ trợ của dự án: tải và chuẩn bị dữ liệu, sinh tệp trình diễn,
+đo bổ trợ và tổng hợp kết quả thành tài liệu.
 
 Bảng điều khiển Streamlit không nằm ở đây mà nằm độc lập tại `apps/dashboard/`.
 
@@ -18,14 +18,14 @@ Windows, macOS và trên trang kho mã.
 
 ```
 scripts/
-├── pipeline/   chuẩn bị dữ liệu và chạy thực nghiệm
-├── analysis/   phân tích kết quả, lập bảng, kiểm toán
+├── pipeline/   tải và chuẩn bị dữ liệu, sinh tệp trình diễn
+├── analysis/   đo bổ trợ, lập bảng, tổng hợp kết quả
 └── README.md   tệp này
 ```
 
 ---
 
-## 2. `pipeline/` (dữ liệu và thực nghiệm)
+## 2. `pipeline/` (dữ liệu)
 
 | Tệp | Việc nó làm |
 |---|---|
@@ -33,14 +33,13 @@ scripts/
 | [`download_nids_datasets.py`](pipeline/download_nids_datasets.py) | Tải các bộ NetFlow thô về `data/raw/` |
 | [`rebuild_parquet.py`](pipeline/rebuild_parquet.py) | Chuyển CSV gốc sang Parquet và đối chiếu toàn vẹn từng ô |
 
-Thêm vào đây: script về chuẩn bị dữ liệu, tải dữ liệu, tiền xử lý, chạy pipeline
-mô hình, hoặc đồng bộ kết quả thực nghiệm.
+Thêm vào đây: script về tải dữ liệu, chuẩn bị dữ liệu hoặc tiền xử lý.
 
 ---
 
-## 3. `analysis/` (phân tích, lập bảng, kiểm toán)
+## 3. `analysis/` (đo bổ trợ, lập bảng, tổng hợp)
 
-Các script tổng hợp và kiểm toán chỉ đọc kết quả đã chốt. Hai script đo lường
+Các script tổng hợp chỉ đọc kết quả đã chốt. Hai script đo lường
 có phạm vi riêng: `supplementary_measurements.py` huấn luyện các baseline dạng
 bảng nhỏ và ghi vào `models/supplementary/`, còn `do_tap_demo.py` chạy phép thử
 giao diện. Không chạy lại `do_tap_demo.py` hoặc notebook thực nghiệm trên bản
@@ -54,8 +53,7 @@ dữ liệu hoàn thiện vì chúng có thể ghi đè kết quả đã dùng t
 | [`do_tap_demo.py`](analysis/do_tap_demo.py) | Đo ba tệp demo ở hai trạng thái bộ nhớ của mô hình; chỉ dùng cho kiểm thử chức năng giao diện. |
 | [`profile_datasets.py`](analysis/profile_datasets.py) | In bảng quy mô các bộ dữ liệu thô và bảng đối chiếu dung lượng CSV với Parquet |
 
-Thêm vào đây: công cụ phân tích, tính chỉ số, kiểm chất lượng mã, lập bảng đối
-sánh.
+Thêm vào đây: công cụ phân tích, tính chỉ số, lập bảng đối sánh.
 
 ---
 

@@ -39,7 +39,7 @@ Các tài liệu này diễn giải notebook đã thực thi và đầu ra thự
 `KET_QUA_DO_LUONG.md` được dựng từ kết quả JSON, bảng cắt bỏ và phép đo bổ trợ
 đã lưu. Số liệu của công trình khác được chép theo tài liệu tham khảo đã kiểm
 chứng và được ghi nguồn riêng.
-Dữ liệu, checkpoint, kết quả gốc, bản toàn văn và gói Kaggle nằm trong bốn thư
+Dữ liệu, checkpoint, kết quả gốc, tài liệu tham khảo và gói Kaggle nằm trong bốn thư
 mục `data/`, `models/`, `references/`, `dist/` trên Google Drive. Báo cáo Word
 và hồ sơ của trường không thuộc gói được chia sẻ.
 

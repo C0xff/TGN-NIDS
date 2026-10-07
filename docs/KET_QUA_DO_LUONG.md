@@ -319,7 +319,7 @@ Phép triệt tiêu từng thuộc tính ở mục 4.7.1 là công cụ giải t
 
 ## 4. Số liệu do các nghiên cứu đối sánh công bố
 
-**Điều kiện đo.** Trích nguyên từ bản gốc trong `references/`, không đo lại. Số hiệu tài liệu theo danh mục của báo cáo.
+**Điều kiện đo.** Trích nguyên từ bản gốc của từng bài báo, không đo lại. Số hiệu tài liệu theo danh mục của báo cáo.
 
 | Nguồn | Bộ dữ liệu | Bài toán | Chỉ số | Điều kiện đo của bài báo |
 |---|---|---|---|---|

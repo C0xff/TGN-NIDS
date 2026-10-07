@@ -25,10 +25,10 @@
 !/notebooks/executed/README.md
 !/notebooks/executed/*.ipynb
 
-# Chỉ công bố danh mục trích dẫn, không phân phối bản toàn văn.
+# Chỉ công bố tệp ghi chú của thư mục tài liệu tham khảo.
 !/references/
 /references/*
-!/references/TAI_LIEU_THAM_KHAO.md
+!/references/README.md
 
 # Tệp phát sinh cục bộ bên trong các thư mục được công bố.
 **/__pycache__/

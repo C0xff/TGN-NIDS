@@ -1,7 +1,7 @@
 # Sơ đồ kiến trúc dự án và vị trí tài sản
 
 Tài liệu này mô tả toàn bộ đồ án theo hai nơi lưu trữ: mã và tài liệu kỹ thuật
-công khai trên GitHub; dữ liệu, đầu ra thực nghiệm và tài liệu toàn văn trong
+công khai trên GitHub; dữ liệu, đầu ra thực nghiệm và tài liệu tham khảo trong
 gói Google Drive đi kèm. Sơ đồ không ngụ ý rằng các tài sản trên Drive có mặt
 trong bản sao GitHub.
 
@@ -11,7 +11,7 @@ trong bản sao GitHub.
 flowchart TD
     SRC["src/tgn_nids/<br/>tiền xử lý, đồ thị, TGN, đánh giá, giải thích"]
     APP["apps/dashboard/<br/>giao diện Streamlit"]
-    SCRIPTS["scripts/<br/>chuẩn bị, kiểm tra, tổng hợp"]
+    SCRIPTS["scripts/<br/>chuẩn bị dữ liệu, đo bổ trợ, tổng hợp"]
     TESTS["tests/<br/>kiểm thử tự động"]
     EXEC["notebooks/executed/<br/>bốn notebook đã thực thi"]
     DOCS["docs/<br/>tài liệu kỹ thuật và số liệu đối chiếu"]
@@ -36,7 +36,7 @@ flowchart LR
         DATA["data/<br/>NetFlow gốc, CSV/Parquet, tệp mẫu"]
         SAVED["models/<br/>checkpoint, chỉ số, bảng, hình"]
         DIST["dist/<br/>gói chuyển giao Kaggle"]
-        REFS["references/<br/>toàn văn, RFC, bản trích xuất"]
+        REFS["references/<br/>tài liệu tham khảo"]
     end
 
     DATA --> SRC["Mã nguồn GitHub"]
@@ -57,8 +57,8 @@ làm việc.
 3. Dùng dashboard ở chế độ trình diễn nếu chưa có checkpoint.
 4. Khi cần tái tạo môi trường dữ liệu, suy luận bằng trọng số đã chốt hoặc đối
    chiếu số liệu gốc, lấy đúng thư mục tương ứng từ gói Drive.
-5. Dùng danh mục trong `references/TAI_LIEU_THAM_KHAO.md` trên GitHub để tra
-   cứu; chỉ xem bản toàn văn trong Drive khi có quyền sử dụng phù hợp.
+5. Danh mục tài liệu tham khảo nằm trong báo cáo của đồ án; tài liệu trong
+   Drive chỉ dùng khi có quyền sử dụng phù hợp.
 
 ## 4. Phân định trách nhiệm
 
